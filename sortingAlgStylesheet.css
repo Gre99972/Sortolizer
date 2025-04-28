@@ -1,0 +1,18 @@
+body {
+    background-color: black;
+}
+
+h1 {
+    color: limegreen;
+    text-align: center;
+    font-size: 60;
+}
+
+p {
+    color: limegreen;
+}
+ 
+#AlgorithmCanvas {
+    border-width: 1px;
+    border-color: #FFFFFF;
+}
