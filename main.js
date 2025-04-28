@@ -122,7 +122,7 @@ async function bogoSort(){
     runBogo = false;
 }
 
-function bubbleSort(){
+/*function bubbleSort(){
     // Bubble sort works by swapping adjacent elements in the array
     for (i = 0; i < barArray.length; i++){
         for (j = i; j < barArray.length; j++){
@@ -137,7 +137,7 @@ function bubbleSort(){
             }
         }
     }
-}
+}*/
 
 createBars();
 
