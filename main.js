@@ -38,6 +38,10 @@ class SortBar {
 barArray = [];
 numBarsToMake = 100;
 shuffling = false;
+sortArray = false;
+
+// Audio Stuff
+const audioCtx = new AudioContext();
 
 // Main program
 function drawBars(){
@@ -66,7 +70,18 @@ function sleep(ms){
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-async function shuffleBars(){
+function playBleep(duration = 100, frequency = 1000) {
+    const oscNode = new OscillatorNode(audioCtx, {type: "triangle", frequency: frequency});
+    const gainNode = new GainNode(audioCtx, {gain: 0.5});
+    oscNode.connect(gainNode).connect(audioCtx.destination);
+
+    oscNode.frequency.setValueAtTime(frequency, audioCtx.currentTime);
+    oscNode.start();
+    setTimeout(() => oscNode.stop(), duration);
+}
+
+async function shuffleBars(fromBogo = false){
+    if (!fromBogo) { runBogo = false; }
     shuffling = true;
     for (index = (barArray.length - 1); index > 0; index--){
         // Find a random index past i (or i)
@@ -82,13 +97,29 @@ async function shuffleBars(){
         // Changes colour of the bars, draws them, waits, then continues (resets the colour of bars as well)
         barArray[index].SetColor(1);
         barArray[newIndex].SetColor(1);
-        drawBars();
-        await sleep(3);
+        drawBars();  
+        playBleep(5, Math.floor(((barArray[newIndex].value * 10) + 500)));
+        await sleep(5);
         barArray[index].SetColor(0);
         barArray[newIndex].SetColor(0);
     }
     shuffling = false;
     drawBars();
+}
+
+async function bogoSort(){
+    arraySorted = false;
+    runBogo = true;
+    while (!arraySorted && runBogo){
+        await shuffleBars(true);
+        arraySorted = true;
+        for (index = 0; index < (barArray.length - 1); index++){
+            if (barArray[index].value > barArray[index+1].value){
+                arraySorted = false;
+            }
+        }
+    }
+    runBogo = false;
 }
 
 function bubbleSort(){
