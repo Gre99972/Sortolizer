@@ -42,7 +42,7 @@ sortArray = false;
 runBogo = false;
 
 // Audio Stuff
-const audioCtx = new AudioContext();
+const audioCtx = new AudioContext({ sampleRate: 48000});
 
 // Main program
 async function drawBars(){
@@ -71,9 +71,9 @@ function sleep(ms){
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-function playBleep(duration = 100, frequency = 1000) {
-    const oscNode = new OscillatorNode(audioCtx, {type: "triangle", frequency: frequency});
-    const gainNode = new GainNode(audioCtx, {gain: 0.5});
+function playBleep(duration, frequency = 1000) {
+    const oscNode = new OscillatorNode(audioCtx, {type: "square", frequency: frequency});
+    const gainNode = new GainNode(audioCtx, {gain: 0.05});
     oscNode.connect(gainNode).connect(audioCtx.destination);
 
     oscNode.frequency.setValueAtTime(frequency, audioCtx.currentTime);
@@ -219,6 +219,7 @@ async function insertionSort(){
 
             barArray[index].SetColor(1);
             barArray[index-1].SetColor(1);
+            playBleep(5, Math.floor(((barArray[index].value * 10) + 500)));
             await drawBars();
             await sleep(5);
             barArray[index].SetColor(0);
@@ -238,19 +239,6 @@ async function insertionSort(){
     if (doSort){
         greenPass();
     }
-}
-
-async function mergeSort(){
-    // This sort works by dividing the list into smaller lists, ordering the smaller lists, then merging the two lists together
-    // Complexity: log(n)
-
-    // Ensures that the algorithm is not being sorted already by another algorithm. Or that it's not being shuffled
-    doSort = false;
-    shuffling = false;
-    await sleep(50);
-    doSort = true;
-
-
 }
 
 
@@ -301,6 +289,32 @@ async function selectionSort(){
     if (doSort){
         greenPass();
     }
+}
+
+function mergeSortRecurse(subArray){
+    if (subArray.length > 1){
+        newArrayLength = Math.floor(subArray.length/2);
+        //dividedArray1 = ;
+        //dividedArray2 = ;
+        dividedArray1 = mergeSortRecurse(dividedArray1);
+        dividedArray2 = mergeSortRecurse(dividedArray2);
+    }
+
+
+    return subArray
+}
+
+async function mergeSort(){
+    // This sort works by dividing the list into smaller lists, ordering the smaller lists, then merging the two lists together
+    // Complexity: log(n)
+
+    // Ensures that the algorithm is not being sorted already by another algorithm. Or that it's not being shuffled
+    doSort = false;
+    shuffling = false;
+    await sleep(50);
+    doSort = true;
+
+
 }
 
 async function greenPass(){
