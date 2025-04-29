@@ -39,6 +39,7 @@ barArray = [];
 numBarsToMake = 100;
 shuffling = false;
 sortArray = false;
+runBogo = false;
 
 // Audio Stuff
 const audioCtx = new AudioContext();
@@ -109,7 +110,8 @@ async function shuffleBars(fromBogo = false){
 
 async function bogoSort(){
     arraySorted = false;
-    runBogo = true;
+    if (runBogo){ runBogo = false;}
+    else { runBogo = true; }
     while (!arraySorted && runBogo){
         await shuffleBars(true);
         arraySorted = true;
@@ -122,22 +124,78 @@ async function bogoSort(){
     runBogo = false;
 }
 
-/*function bubbleSort(){
-    // Bubble sort works by swapping adjacent elements in the array
-    for (i = 0; i < barArray.length; i++){
-        for (j = i; j < barArray.length; j++){
-            // barArray[j] will be after barArray[i] in the array. So if barArray[j] is smaller, they need to be swapped
-            if (barArray[j].value < barArray[i].value){
+/*async function bubbleSort(){
+    // Bubble sort goes through the array and swaps adjacent elements
+    elementSwapped = true;
+    while (elementSwapped){
+        for (index = 0; index < barArray.length-1; index++){
+            if (barArray[i+1] > barArray[i]){
                 // Swap the indexes
-                temp = barArray[j];
-                barArray[j] = barArray[i];
-                barArray[j].SetIndex(j);
-                barArray[i] = temp;
-                barArray[i].SetIndex(i);
+                temp = barArray[index+1];
+                barArray[index+1] = barArray[index1];
+                barArray[index+1].SetIndex(index+1);
+                barArray[index1] = temp;
+                barArray[index1].SetIndex(index1);
+
+                barArray[index1].SetColor(1);
+                barArray[index+1].SetColor(1);
             }
+            else {
+                barArray[index1].SetColor(2);
+                barArray[index+1].SetColor(2);  
+            }            
         }
     }
+
 }*/
+
+
+async function mysterySort(){
+    //This sort works by swapping adjacent elements in the array
+    for (index1 = 0; index1 < barArray.length - 1; index1++){
+        for (index2 = index1 + 1; index2 < barArray.length; index2++){
+            // barArray[j] will be after barArray[i] in the array. So if barArray[j] is smaller, they need to be swapped
+            if (barArray[index2].value < barArray[index1].value){
+                // Swap the indexes
+                temp = barArray[index2];
+                barArray[index2] = barArray[index1];
+                barArray[index2].SetIndex(index2);
+                barArray[index1] = temp;
+                barArray[index1].SetIndex(index1);
+
+                barArray[index1].SetColor(1);
+                barArray[index2].SetColor(1);
+            }
+            else{
+                barArray[index1].SetColor(2);
+                barArray[index2].SetColor(2);       
+            }
+            playBleep(5, Math.floor(((barArray[index2].value * 10) + 500)));
+            drawBars();
+            await sleep(5);
+            barArray[index1].SetColor(0);
+            barArray[index2].SetColor(0);
+        }
+    }
+    drawBars();
+
+    // Do the green pass
+    for (index = 0; index < (barArray.length - 1); index++){
+        if (barArray[index].value > barArray[index+1].value){
+            arraySorted = false;
+        }
+        else{
+            barArray[index].SetColor(2);
+            barArray[index + 1].SetColor(2);
+            playBleep(5, Math.floor(((barArray[index].value * 10) + 500)));
+            drawBars();
+            await sleep(5);
+            barArray[index].SetColor(0);
+            barArray[index + 1].SetColor(0);
+        }
+    }
+    drawBars();
+}
 
 createBars();
 
