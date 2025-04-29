@@ -207,7 +207,23 @@ async function insertionSort(){
     await sleep(50);
     doSort = true;
     
+    for (unsortedIndex = 0; unsortedIndex < barArray.length; unsortedIndex++){
+        index = unsortedIndex;
+        num = 1;
+        while (barArray[index] > barArray[unsortedIndex-num]){
+            // Swap the elements
+            temp = barArray[unsortedIndex-num];
+            barArray[index2] = barArray[index1];
+            barArray[index2].SetIndex(index2);
+            barArray[index1] = temp;
+            barArray[index1].SetIndex(index1);
 
+            barArray[index1].SetColor(1);
+            barArray[index2].SetColor(1);
+
+            num++;
+        }
+    }
 }
 
 async function mergeSort(){
@@ -224,7 +240,7 @@ async function mergeSort(){
 }
 
 
-async function mysterySort(){
+async function selectionSort(){
     // This sort works by swapping adjacent elements in the array
     // Complexity: n^2
 
