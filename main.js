@@ -124,30 +124,42 @@ async function bogoSort(){
     runBogo = false;
 }
 
-/*async function bubbleSort(){
+async function bubbleSort(){
     // Bubble sort goes through the array and swaps adjacent elements
     elementSwapped = true;
+    numIterations = 0;
     while (elementSwapped){
-        for (index = 0; index < barArray.length-1; index++){
-            if (barArray[i+1] > barArray[i]){
+        elementSwapped = false;
+        numIterations++;
+        for (index = 0; index < barArray.length-numIterations; index++){
+            if (barArray[index+1].value < barArray[index].value){
                 // Swap the indexes
                 temp = barArray[index+1];
-                barArray[index+1] = barArray[index1];
+                barArray[index+1] = barArray[index];
                 barArray[index+1].SetIndex(index+1);
-                barArray[index1] = temp;
-                barArray[index1].SetIndex(index1);
+                barArray[index] = temp;
+                barArray[index].SetIndex(index);
 
-                barArray[index1].SetColor(1);
+                barArray[index].SetColor(1);
                 barArray[index+1].SetColor(1);
+                elementSwapped = true;
             }
             else {
-                barArray[index1].SetColor(2);
+                barArray[index].SetColor(2);
                 barArray[index+1].SetColor(2);  
-            }            
+            }
+            playBleep(5, Math.floor(((barArray[index+1].value * 10) + 500)));
+            drawBars();
+            await sleep(5);
+            barArray[index].SetColor(0);
+            barArray[index+1].SetColor(0);            
         }
+        drawBars();
     }
 
-}*/
+    // Do the green pass
+    greenPass();
+}
 
 
 async function mysterySort(){
@@ -180,6 +192,10 @@ async function mysterySort(){
     drawBars();
 
     // Do the green pass
+    greenPass();
+}
+
+async function greenPass(){
     for (index = 0; index < (barArray.length - 1); index++){
         if (barArray[index].value > barArray[index+1].value){
             arraySorted = false;
@@ -194,7 +210,7 @@ async function mysterySort(){
             barArray[index + 1].SetColor(0);
         }
     }
-    drawBars();
+    drawBars();   
 }
 
 createBars();
