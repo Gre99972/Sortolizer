@@ -207,22 +207,36 @@ async function insertionSort(){
     await sleep(50);
     doSort = true;
     
-    for (unsortedIndex = 0; unsortedIndex < barArray.length; unsortedIndex++){
+    for (unsortedIndex = 1; unsortedIndex < barArray.length; unsortedIndex++){
         index = unsortedIndex;
-        num = 1;
-        while (barArray[index] > barArray[unsortedIndex-num]){
+        while (barArray[index].value < barArray[index-1].value){
             // Swap the elements
-            temp = barArray[unsortedIndex-num];
-            barArray[index2] = barArray[index1];
-            barArray[index2].SetIndex(index2);
-            barArray[index1] = temp;
-            barArray[index1].SetIndex(index1);
+            temp = barArray[index-1];
+            barArray[index-1] = barArray[index];
+            barArray[index-1].SetIndex(index-1);
+            barArray[index] = temp;
+            barArray[index].SetIndex(index);
 
-            barArray[index1].SetColor(1);
-            barArray[index2].SetColor(1);
+            barArray[index].SetColor(1);
+            barArray[index-1].SetColor(1);
+            await drawBars();
+            await sleep(5);
+            barArray[index].SetColor(0);
+            barArray[index-1].SetColor(0);
+            if (!doSort){
+                break;
+            }
 
-            num++;
+            if (index > 1) { index--; }
+            else { break; }
         }
+        if (!doSort){
+            break;
+        }
+    }
+
+    if (doSort){
+        greenPass();
     }
 }
 
