@@ -2,6 +2,9 @@
 const canvas = document.getElementById("AlgorithmCanvas");
 const ctx = canvas.getContext("2d");
 
+// Note: Change the sorts so that a sort/shuffle cannot start unless the other sort is compelted (exception bogo)
+
+
 // Class for the bar
 class SortBar {
     width = 50;
@@ -82,15 +85,8 @@ function playBleep(duration, frequency = 1000) {
 }
 
 async function shuffleBars(fromBogo = false){
-    // Ensures that the algorithm is not being sorted already by another algorithm. Or that it's not being shuffled
-    doSort = false;
-    shuffling = false;
-    await sleep(50);
-    doSort = true;
-
     if (!fromBogo) { 
         runBogo = false; 
-        doSort = false; 
     }
     shuffling = true;
     for (let index = (barArray.length - 1); index > 0; index--){
@@ -108,7 +104,7 @@ async function shuffleBars(fromBogo = false){
         barArray[index].SetColor(1);
         barArray[newIndex].SetColor(1);
         await drawBars();  
-        playBleep(5, Math.floor(((barArray[newIndex].value * 10) + 500)));
+        playBleep(5, Math.floor(((((barArray[newIndex].value)/(barArray.length) * 100) * 10) + 500)));
         if (!shuffling){
             break;
         }
@@ -121,15 +117,10 @@ async function shuffleBars(fromBogo = false){
 }
 
 async function bogoSort(){
-    // Ensures that the algorithm is not being sorted already by another algorithm. Or that it's not being shuffled
-    doSort = false;
-    shuffling = false;
-    await sleep(50);
-    doSort = true;
-
+    shuffling = true;
     arraySorted = false;
     if (runBogo){ runBogo = false;}
-    else { runBogo = true; doSort = true; }
+    else { runBogo = true;}
     while (!arraySorted && runBogo){
         await shuffleBars(true);
         arraySorted = true;
@@ -138,26 +129,19 @@ async function bogoSort(){
                 arraySorted = false;
             }
         }
-        if (!doSort){
-            break;
-        }
     }
     runBogo = false;
+    shuffling = false;
 }
 
 async function bubbleSort(){
     // Bubble sort goes through the array and swaps adjacent elements
     // Complexity: n^2
 
-    // Ensures that the algorithm is not being sorted already by another algorithm. Or that it's not being shuffled
-    doSort = false;
-    shuffling = false;
-    await sleep(50);
-    doSort = true;
-
     let elementSwapped = true;
     let numIterations = 0;
-    while (elementSwapped && doSort){
+    shuffling = true;
+    while (elementSwapped){
         elementSwapped = false;
         numIterations++;
         for (let index = 0; index < barArray.length-numIterations; index++){
@@ -177,11 +161,8 @@ async function bubbleSort(){
                 barArray[index].SetColor(2);
                 barArray[index+1].SetColor(2);  
             }
-            playBleep(5, Math.floor(((barArray[index+1].value * 10) + 500)));
+            playBleep(5, Math.floor(((((barArray[index].value)/(barArray.length) * 100) * 10) + 500)));
             await drawBars();
-            if (!doSort){
-                break;
-            }   
             await sleep(5);
             barArray[index].SetColor(0);
             barArray[index+1].SetColor(0);         
@@ -191,21 +172,15 @@ async function bubbleSort(){
     }
 
     // Do the green pass
-    if (doSort){
-        greenPass();
-    }
+    greenPass();
+    shuffling = false;
 }
 
 async function insertionSort(){
     // This sort works by creating a sorted and unsorted array. Each element in the unsorted array is inserted into its correct position in
     // the sorted array until the array is fully sorted
     // Complexity: n^2
-    
-    // Ensures that the algorithm is not being sorted already by another algorithm. Or that it's not being shuffled
-    doSort = false;
-    shuffling = false;
-    await sleep(50);
-    doSort = true;
+    shuffling = true;
     
     for (let unsortedIndex = 1; unsortedIndex < barArray.length; unsortedIndex++){
         let index = unsortedIndex;
@@ -219,39 +194,25 @@ async function insertionSort(){
 
             barArray[index].SetColor(1);
             barArray[index-1].SetColor(1);
-            playBleep(5, Math.floor(((barArray[index].value * 10) + 500)));
+            playBleep(5, Math.floor(((((barArray[index].value)/(barArray.length) * 100) * 10) + 500)));
             await drawBars();
             await sleep(5);
             barArray[index].SetColor(0);
             barArray[index-1].SetColor(0);
-            if (!doSort){
-                break;
-            }
-
             if (index > 1) { index--; }
             else { break; }
         }
-        if (!doSort){
-            break;
-        }
     }
 
-    if (doSort){
-        greenPass();
-    }
+    greenPass();
+    shuffling = false;
 }
 
 
 async function selectionSort(){
     // This sort works by swapping adjacent elements in the array
     // Complexity: n^2
-
-    // Ensures that the algorithm is not being sorted already by another algorithm. Or that it's not being shuffled
-    doSort = false;
-    shuffling = false;
-    await sleep(50);
-    doSort = true;
-
+    shuffling = true;
     for (let index1 = 0; index1 < barArray.length - 1; index1++){
         for (let index2 = index1 + 1; index2 < barArray.length; index2++){
             // barArray[j] will be after barArray[i] in the array. So if barArray[j] is smaller, they need to be swapped
@@ -270,34 +231,27 @@ async function selectionSort(){
                 barArray[index1].SetColor(2);
                 barArray[index2].SetColor(2);       
             }
-            playBleep(5, Math.floor(((barArray[index2].value * 10) + 500)));
+            playBleep(5, Math.floor(((((barArray[index2].value)/(barArray.length) * 100) * 10) + 500)));
             await drawBars();
             await sleep(5);
             barArray[index1].SetColor(0);
-            barArray[index2].SetColor(0);
-            if (!doSort){
-                break;
-            }    
-        }
-        if (!doSort){
-            break;
+            barArray[index2].SetColor(0); 
         }
     }
     await drawBars();
 
     // Do the green pass
-    if (doSort){
-        greenPass();
-    }
+    greenPass();
+    shuffling = false;
 }
 
-async function mergeSortRecurse(subArray, trueArrayStartIndex){
+async function mergeSort(subArray, trueArrayStartIndex){
     if (subArray.length > 1){
         let newArrayLength = Math.floor(subArray.length/2);
         let dividedArray1 = subArray.slice(0, newArrayLength);
         let dividedArray2 = subArray.slice(newArrayLength, subArray.length);
-        dividedArray1 = await mergeSortRecurse(dividedArray1, trueArrayStartIndex);
-        dividedArray2 = await mergeSortRecurse(dividedArray2, trueArrayStartIndex + newArrayLength);
+        dividedArray1 = await mergeSort(dividedArray1, trueArrayStartIndex);
+        dividedArray2 = await mergeSort(dividedArray2, trueArrayStartIndex + newArrayLength);
         // Sort the two (sorted) arrays
         let dividedArrayIndex1 = 0;
         let dividedArrayIndex2 = 0;
@@ -328,7 +282,7 @@ async function mergeSortRecurse(subArray, trueArrayStartIndex){
             }
 
             subArray[i].SetColor(1);
-            playBleep(5, Math.floor(((barArray[i].value * 10) + 500)));
+            playBleep(5, Math.floor(((((barArray[i].value)/(barArray.length) * 100) * 10) + 500)));
             await drawBars();
             await sleep(5);
             subArray[i].SetColor(0);
@@ -338,39 +292,92 @@ async function mergeSortRecurse(subArray, trueArrayStartIndex){
     return subArray
 }
 
-async function mergeSort(){
+async function quickSort(subArray, trueArrayStartIndex){
+    // Pivot on the middle element
+    pivotValue = subArray[Math.floor(subArray.length/2)];
+    let lessThanArray = [];
+    let greaterThanArray = [];
+    for (let i = 0; i < subArray.length; i++){
+        if (subArray[i] < pivotValue){
+            lessThanArray += subArray[i];
+        }
+        else{
+            greaterThanArray += subArray[i];
+        }
+    }
+}
+
+async function shuffleBarsEntry(){
+    if (!shuffling){
+        await shuffleBars();
+    }
+}
+
+async function bubbleSortEntry(){
+    if (!shuffling){
+        await bubbleSort();
+    }
+}
+
+async function insertionSortEntry(){
+    if (!shuffling){
+        await insertionSort();
+    }
+}
+
+async function selectionSortEntry(){
+    if (!shuffling){
+        await selectionSort();
+    }
+}
+
+async function bogoSortEntry(){
+    if (!runBogo){
+        await bogoSort();
+    }
+    else{
+        runBogo = false;
+    }
+}
+
+async function decideSortEntry() {
+    if (!shuffling){
+        shuffling = true;
+        await greenPass();
+        shuffling = false;
+    }
+}
+
+async function mergeSortEntry(){
     // This sort works by dividing the list into smaller lists, ordering the smaller lists, then merging the two lists together
     // Complexity: log(n)
 
-    // Ensures that the algorithm is not being sorted already by another algorithm. Or that it's not being shuffled
-    doSort = false;
-    shuffling = false;
-    await sleep(50);
-    doSort = true;
-
-    barArray = await mergeSortRecurse(barArray, 0);
-    await drawBars();
-    if (doSort){ await greenPass(); }
+    if (!shuffling){
+        shuffling = true;
+        barArray = await mergeSort(barArray, 0);
+        await drawBars();
+        await greenPass();
+        shuffling = false;
+    }
 }
 
-async function adjustIndexes() {
-    for (let i = 0; i < barArray.length; i++){
-        barArray[i].index = i;
+async function quickSortEntry(){
+    if (!shuffling){
+        shuffling = true;
+        barArray = await quickSort(barArray, 0);
+        await drawBars();
+        await greenPass();
+        shuffling = false;
     }
 }
 
 async function greenPass(){
-    doSort = true;
     for (let index = 0; index < (barArray.length - 1); index++){
         barArray[index].SetColor(2);
         barArray[index + 1].SetColor(2);
-        playBleep(5, Math.floor(((barArray[index].value * 10) + 500)));
+        playBleep(5, Math.floor(((((barArray[index].value)/(barArray.length) * 100) * 10) + 500)));
         await drawBars();
         await sleep(5);
-
-        if (!doSort){
-            break;
-        }
     }
     await drawBars();   
 }
