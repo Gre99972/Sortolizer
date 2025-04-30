@@ -294,17 +294,21 @@ async function mergeSort(subArray, trueArrayStartIndex){
 
 async function quickSort(subArray, trueArrayStartIndex){
     // Pivot on the middle element
-    pivotValue = subArray[Math.floor(subArray.length/2)];
+    pivot = subArray[Math.floor(subArray.length/2)];
     let lessThanArray = [];
     let greaterThanArray = [];
     for (let i = 0; i < subArray.length; i++){
-        if (subArray[i] < pivotValue){
+        if (subArray[i].value < pivot.value){
             lessThanArray += subArray[i];
         }
         else{
             greaterThanArray += subArray[i];
         }
     }
+    lessThanArray = quickSort(lessThanArray);
+    greaterThanArray = quickSort(greaterThanArray);
+    subArray = lessThanArray + greaterThanArray;
+    return subArray;
 }
 
 async function shuffleBarsEntry(){
