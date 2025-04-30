@@ -93,7 +93,7 @@ async function shuffleBars(fromBogo = false){
         doSort = false; 
     }
     shuffling = true;
-    for (index = (barArray.length - 1); index > 0; index--){
+    for (let index = (barArray.length - 1); index > 0; index--){
         // Find a random index past i (or i)
         newIndex = Math.floor(Math.random() * i);
         
@@ -133,7 +133,7 @@ async function bogoSort(){
     while (!arraySorted && runBogo){
         await shuffleBars(true);
         arraySorted = true;
-        for (index = 0; index < (barArray.length - 1); index++){
+        for (let index = 0; index < (barArray.length - 1); index++){
             if (barArray[index].value > barArray[index+1].value){
                 arraySorted = false;
             }
@@ -155,15 +155,15 @@ async function bubbleSort(){
     await sleep(50);
     doSort = true;
 
-    elementSwapped = true;
-    numIterations = 0;
+    let elementSwapped = true;
+    let numIterations = 0;
     while (elementSwapped && doSort){
         elementSwapped = false;
         numIterations++;
-        for (index = 0; index < barArray.length-numIterations; index++){
+        for (let index = 0; index < barArray.length-numIterations; index++){
             if (barArray[index+1].value < barArray[index].value){
                 // Swap the indexes
-                temp = barArray[index+1];
+                let temp = barArray[index+1];
                 barArray[index+1] = barArray[index];
                 barArray[index+1].SetIndex(index+1);
                 barArray[index] = temp;
@@ -207,11 +207,11 @@ async function insertionSort(){
     await sleep(50);
     doSort = true;
     
-    for (unsortedIndex = 1; unsortedIndex < barArray.length; unsortedIndex++){
-        index = unsortedIndex;
+    for (let unsortedIndex = 1; unsortedIndex < barArray.length; unsortedIndex++){
+        let index = unsortedIndex;
         while (barArray[index].value < barArray[index-1].value){
             // Swap the elements
-            temp = barArray[index-1];
+            let temp = barArray[index-1];
             barArray[index-1] = barArray[index];
             barArray[index-1].SetIndex(index-1);
             barArray[index] = temp;
@@ -252,12 +252,12 @@ async function selectionSort(){
     await sleep(50);
     doSort = true;
 
-    for (index1 = 0; index1 < barArray.length - 1; index1++){
-        for (index2 = index1 + 1; index2 < barArray.length; index2++){
+    for (let index1 = 0; index1 < barArray.length - 1; index1++){
+        for (let index2 = index1 + 1; index2 < barArray.length; index2++){
             // barArray[j] will be after barArray[i] in the array. So if barArray[j] is smaller, they need to be swapped
             if (barArray[index2].value < barArray[index1].value){
                 // Swap the indexes
-                temp = barArray[index2];
+                let temp = barArray[index2];
                 barArray[index2] = barArray[index1];
                 barArray[index2].SetIndex(index2);
                 barArray[index1] = temp;
@@ -291,15 +291,49 @@ async function selectionSort(){
     }
 }
 
-function mergeSortRecurse(subArray){
+async function mergeSortRecurse(subArray){
     if (subArray.length > 1){
-        newArrayLength = Math.floor(subArray.length/2);
-        //dividedArray1 = ;
-        //dividedArray2 = ;
-        dividedArray1 = mergeSortRecurse(dividedArray1);
-        dividedArray2 = mergeSortRecurse(dividedArray2);
-    }
+        let newArrayLength = Math.floor(subArray.length/2);
+        let dividedArray1 = subArray.slice(0, newArrayLength);
+        let dividedArray2 = subArray.slice(newArrayLength, subArray.length);
+        dividedArray1 = await mergeSortRecurse(dividedArray1);
+        dividedArray2 = await mergeSortRecurse(dividedArray2);
+        // Sort the two (sorted) arrays
+        let dividedArrayIndex1 = 0;
+        let dividedArrayIndex2 = 0;
 
+        for (let i = 0; i < subArray.length; i++){
+            let tempIndex = subArray[i].index;
+            if (dividedArrayIndex1 < dividedArray1.length && dividedArrayIndex2 < dividedArray2.length){
+                if (dividedArray1[dividedArrayIndex1].value < dividedArray2[dividedArrayIndex2].value){
+                    subArray[i] = dividedArray1[dividedArrayIndex1];
+                    subArray[i].index = tempIndex;
+                    dividedArrayIndex1++;
+                }
+                else {
+                    subArray[i] = dividedArray2[dividedArrayIndex2];
+                    subArray[i].index = tempIndex;
+                    dividedArrayIndex2++;
+                }
+            }
+            else if (dividedArrayIndex1 < dividedArray1.length){
+                subArray[i] = dividedArray1[dividedArrayIndex1];
+                subArray[i].index = tempIndex;
+                dividedArrayIndex1++;
+            }
+            else{
+                subArray[i] = dividedArray2[dividedArrayIndex2];
+                subArray[i].index = tempIndex;
+                dividedArrayIndex2++;
+            }
+
+            subArray[i].SetColor(1);
+            playBleep(5, Math.floor(((barArray[i].value * 10) + 500)));
+            await drawBars();
+            await sleep(5);
+            subArray[i].SetColor(0);
+        }
+    }
 
     return subArray
 }
@@ -314,21 +348,26 @@ async function mergeSort(){
     await sleep(50);
     doSort = true;
 
+    barArray = await mergeSortRecurse(barArray);
+    await drawBars();
+    if (doSort){ await greenPass(); }
+}
 
+async function adjustIndexes() {
+    for (let i = 0; i < barArray.length; i++){
+        barArray[i].index = i;
+    }
 }
 
 async function greenPass(){
-    for (index = 0; index < (barArray.length - 1); index++){
-        if (barArray[index].value > barArray[index+1].value){
-            arraySorted = false;
-        }
-        else{
-            barArray[index].SetColor(2);
-            barArray[index + 1].SetColor(2);
-            playBleep(5, Math.floor(((barArray[index].value * 10) + 500)));
-            await drawBars();
-            await sleep(5);
-        }
+    doSort = true;
+    for (let index = 0; index < (barArray.length - 1); index++){
+        barArray[index].SetColor(2);
+        barArray[index + 1].SetColor(2);
+        playBleep(5, Math.floor(((barArray[index].value * 10) + 500)));
+        await drawBars();
+        await sleep(5);
+
         if (!doSort){
             break;
         }
