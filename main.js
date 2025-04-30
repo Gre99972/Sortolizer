@@ -36,7 +36,7 @@ class SortBar {
 }
 
 barArray = [];
-numBarsToMake = 100;
+numBarsToMake = 200;
 shuffling = false;
 sortArray = false;
 runBogo = false;
@@ -291,13 +291,13 @@ async function selectionSort(){
     }
 }
 
-async function mergeSortRecurse(subArray){
+async function mergeSortRecurse(subArray, trueArrayStartIndex){
     if (subArray.length > 1){
         let newArrayLength = Math.floor(subArray.length/2);
         let dividedArray1 = subArray.slice(0, newArrayLength);
         let dividedArray2 = subArray.slice(newArrayLength, subArray.length);
-        dividedArray1 = await mergeSortRecurse(dividedArray1);
-        dividedArray2 = await mergeSortRecurse(dividedArray2);
+        dividedArray1 = await mergeSortRecurse(dividedArray1, trueArrayStartIndex);
+        dividedArray2 = await mergeSortRecurse(dividedArray2, trueArrayStartIndex + newArrayLength);
         // Sort the two (sorted) arrays
         let dividedArrayIndex1 = 0;
         let dividedArrayIndex2 = 0;
@@ -307,23 +307,23 @@ async function mergeSortRecurse(subArray){
             if (dividedArrayIndex1 < dividedArray1.length && dividedArrayIndex2 < dividedArray2.length){
                 if (dividedArray1[dividedArrayIndex1].value < dividedArray2[dividedArrayIndex2].value){
                     subArray[i] = dividedArray1[dividedArrayIndex1];
-                    subArray[i].index = tempIndex;
+                    subArray[i].index = i + trueArrayStartIndex;
                     dividedArrayIndex1++;
                 }
                 else {
                     subArray[i] = dividedArray2[dividedArrayIndex2];
-                    subArray[i].index = tempIndex;
+                    subArray[i].index = i + trueArrayStartIndex;
                     dividedArrayIndex2++;
                 }
             }
             else if (dividedArrayIndex1 < dividedArray1.length){
                 subArray[i] = dividedArray1[dividedArrayIndex1];
-                subArray[i].index = tempIndex;
+                subArray[i].index = i + trueArrayStartIndex;
                 dividedArrayIndex1++;
             }
             else{
                 subArray[i] = dividedArray2[dividedArrayIndex2];
-                subArray[i].index = tempIndex;
+                subArray[i].index = i + trueArrayStartIndex;
                 dividedArrayIndex2++;
             }
 
@@ -348,7 +348,7 @@ async function mergeSort(){
     await sleep(50);
     doSort = true;
 
-    barArray = await mergeSortRecurse(barArray);
+    barArray = await mergeSortRecurse(barArray, 0);
     await drawBars();
     if (doSort){ await greenPass(); }
 }
