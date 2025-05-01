@@ -293,21 +293,47 @@ async function mergeSort(subArray, trueArrayStartIndex){
 }
 
 async function quickSort(subArray, trueArrayStartIndex){
-    // Pivot on the middle element
-    pivot = subArray[Math.floor(subArray.length/2)];
-    let lessThanArray = [];
-    let greaterThanArray = [];
-    for (let i = 0; i < subArray.length; i++){
-        if (subArray[i].value < pivot.value){
-            lessThanArray += subArray[i];
+    if (subArray.length > 1){
+        // Pivot on the middle element
+        pivot = subArray[Math.floor(Math.random() * subArray.length)];
+        pivot.SetColor(3);
+        let lessThanArray = [];
+        let greaterThanArray = [];
+        // Actually Sort the array...
+        for (let i = 0; i < subArray.length; i++){
+            if (subArray[i].value < pivot.value){
+                lessThanArray.push(subArray[i]);
+            }
+            else{
+                greaterThanArray.push(subArray[i]);
+            }
         }
-        else{
-            greaterThanArray += subArray[i];
+
+        // Rerun through to do the animatic (we need to know how many elements are on each side to draw it... :( ))
+        for (let i = 0; i < lessThanArray.length; i++){
+            lessThanArray[i].index = trueArrayStartIndex + i;
+            lessThanArray[i].SetColor(1);
+            playBleep(5, Math.floor(((((lessThanArray[i].value)/(barArray.length) * 100) * 10) + 500)));
+            await drawBars();
+            await sleep(5);
+            lessThanArray[i].SetColor(0);
         }
+        for (let i = 0; i < greaterThanArray.length; i++){
+            greaterThanArray[i].index = trueArrayStartIndex + lessThanArray.length + i;
+            greaterThanArray[i].SetColor(1);
+            playBleep(5, Math.floor(((((greaterThanArray[i].value)/(barArray.length) * 100) * 10) + 500)));
+            await drawBars();
+            await sleep(5);
+            greaterThanArray[i].SetColor(0);
+        }
+                
+        // Continue to pivot and split until we reach an array with only one element
+        lessThanArray = await quickSort(lessThanArray, trueArrayStartIndex);
+        greaterThanArray = await quickSort(greaterThanArray, trueArrayStartIndex + lessThanArray.length);
+
+        // Reconstruct a sorted subarray to return to the caller
+        subArray = lessThanArray.concat(greaterThanArray);
     }
-    lessThanArray = quickSort(lessThanArray);
-    greaterThanArray = quickSort(greaterThanArray);
-    subArray = lessThanArray + greaterThanArray;
     return subArray;
 }
 
@@ -336,7 +362,7 @@ async function selectionSortEntry(){
 }
 
 async function bogoSortEntry(){
-    if (!runBogo){
+    if (!runBogo && !shuffling){
         await bogoSort();
     }
     else{
@@ -383,7 +409,7 @@ async function greenPass(){
         await drawBars();
         await sleep(5);
     }
-    await drawBars();   
+    await drawBars();
 }
 
 createBars();
