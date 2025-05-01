@@ -39,7 +39,7 @@ class SortBar {
 }
 
 barArray = [];
-numBarsToMake = 100;
+numBarsToMake = 200;
 shuffling = false;
 sortArray = false;
 runBogo = false;
@@ -309,6 +309,46 @@ async function saltShakerSort(){
     shuffling = false;
 }
 
+async function gnomeSort(){
+    shuffling = true;
+    let i = 0;
+    while (i < barArray.length - 1){
+        if (barArray[i].value > barArray[i+1].value){
+            // Swap indexes
+            let temp = barArray[i+1];
+            barArray[i+1] = barArray[i];
+            barArray[i+1].SetIndex(i+1);
+            barArray[i] = temp;
+            barArray[i].SetIndex(i);
+
+            barArray[i].SetColor(3);
+            barArray[i+1].SetColor(1);
+            playBleep(5, Math.floor(((((barArray[i].value)/(barArray.length) * 100) * 10) + 500)));
+            await drawBars();
+            await sleep(5);
+            barArray[i].SetColor(0);
+            barArray[i+1].SetColor(0);
+            // Move back one
+            if (i > 0){
+                i--;
+                barArray[i].SetColor(3);
+                barArray[i+1].SetColor(2);
+                playBleep(5, Math.floor(((((barArray[i].value)/(barArray.length) * 100) * 10) + 500)));
+                await drawBars();
+                await sleep(5);
+                barArray[i].SetColor(0);
+                barArray[i+1].SetColor(0);
+            }
+        }
+        else{
+            i++;
+        }
+    }
+    shuffling = false;
+    greenPass();
+
+}
+
 async function mergeSort(subArray, trueArrayStartIndex){
     if (subArray.length > 1){
         let newArrayLength = Math.floor(subArray.length/2);
@@ -439,6 +479,15 @@ async function saltShakerSortEntry(){
     if (!shuffling){
         await saltShakerSort();
     }   
+}
+
+async function gnomeSortEntry(){
+    // This algoritm works by the following commands. If the two elements next to eachother are in the correct order, move a step forwards
+    // if the two elements are not in the correct order, swap them and move a step backwards
+    // Complexity: n^2
+    if (!shuffling){
+        await gnomeSort();
+    }
 }
 
 async function bogoSortEntry(){
