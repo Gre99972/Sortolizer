@@ -39,7 +39,7 @@ class SortBar {
 }
 
 barArray = [];
-numBarsToMake = 200;
+numBarsToMake = 100;
 shuffling = false;
 sortArray = false;
 runBogo = false;
@@ -130,13 +130,14 @@ async function bogoSort(){
             }
         }
     }
+    if (arraySorted){
+        greenPass();
+    }
     runBogo = false;
     shuffling = false;
 }
 
 async function bubbleSort(){
-    // Bubble sort goes through the array and swaps adjacent elements
-    // Complexity: n^2
 
     let elementSwapped = true;
     let numIterations = 0;
@@ -177,9 +178,6 @@ async function bubbleSort(){
 }
 
 async function insertionSort(){
-    // This sort works by creating a sorted and unsorted array. Each element in the unsorted array is inserted into its correct position in
-    // the sorted array until the array is fully sorted
-    // Complexity: n^2
     shuffling = true;
     
     for (let unsortedIndex = 1; unsortedIndex < barArray.length; unsortedIndex++){
@@ -210,8 +208,6 @@ async function insertionSort(){
 
 
 async function selectionSort(){
-    // This sort works by swapping adjacent elements in the array
-    // Complexity: n^2
     shuffling = true;
     for (let index1 = 0; index1 < barArray.length - 1; index1++){
         for (let index2 = index1 + 1; index2 < barArray.length; index2++){
@@ -239,6 +235,74 @@ async function selectionSort(){
         }
     }
     await drawBars();
+
+    // Do the green pass
+    greenPass();
+    shuffling = false;
+}
+
+async function saltShakerSort(){
+
+    let elementSwapped = true;
+    let numIterations = 0;
+    shuffling = true;
+    while (elementSwapped){
+        elementSwapped = false;
+        numIterations++;
+        if (numIterations % 2 == 1){
+            for (let index = Math.floor(numIterations/2); index < barArray.length-Math.floor(numIterations/2) - 1; index++){
+                if (barArray[index+1].value < barArray[index].value){
+                    // Swap the indexes
+                    let temp = barArray[index+1];
+                    barArray[index+1] = barArray[index];
+                    barArray[index+1].SetIndex(index+1);
+                    barArray[index] = temp;
+                    barArray[index].SetIndex(index);
+
+                    barArray[index].SetColor(1);
+                    barArray[index+1].SetColor(1);
+                    elementSwapped = true;
+                }
+                else {
+                    barArray[index].SetColor(2);
+                    barArray[index+1].SetColor(2);  
+                }
+                playBleep(5, Math.floor(((((barArray[index].value)/(barArray.length) * 100) * 10) + 500)));
+                await drawBars();
+                await sleep(5);
+                barArray[index].SetColor(0);
+                barArray[index+1].SetColor(0);         
+            }
+        }
+        else{
+            for (let index = barArray.length-Math.floor(numIterations/2) - 1; index > Math.floor(numIterations/2)-1; index--){
+                if (barArray[index-1].value > barArray[index].value){
+                    // Swap the indexes
+                    let temp = barArray[index-1];
+                    barArray[index-1] = barArray[index];
+                    barArray[index-1].SetIndex(index-1);
+                    barArray[index] = temp;
+                    barArray[index].SetIndex(index);
+
+                    barArray[index].SetColor(1);
+                    barArray[index-1].SetColor(1);
+                    elementSwapped = true;
+                }
+                else {
+                    barArray[index].SetColor(2);
+                    barArray[index-1].SetColor(2);  
+                }
+                playBleep(5, Math.floor(((((barArray[index].value)/(barArray.length) * 100) * 10) + 500)));
+                await drawBars();
+                await sleep(5);
+                barArray[index].SetColor(0);
+                barArray[index-1].SetColor(0); 
+                barArray[index+1].SetColor(0);         
+            }        
+        }
+
+        await drawBars(); 
+    }
 
     // Do the green pass
     greenPass();
@@ -344,24 +408,42 @@ async function shuffleBarsEntry(){
 }
 
 async function bubbleSortEntry(){
+    // This sort works by swapping adjacent elements until the whole array is sorted
+    // Complexity: n^2   
     if (!shuffling){
         await bubbleSort();
     }
 }
 
 async function insertionSortEntry(){
+    // This sort works by creating a sorted and unsorted array. Each element in the unsorted array is inserted into its correct position in
+    // the sorted array until the array is fully sorted
+    // Complexity: n^2
+
     if (!shuffling){
         await insertionSort();
     }
 }
 
 async function selectionSortEntry(){
+    // This sort works by finding which of the remaining elements should come next and placing it in the correct position
+    // Complexity: n^2
     if (!shuffling){
         await selectionSort();
     }
 }
 
+async function saltShakerSortEntry(){
+    // This sort works similarly to bubble sort but changes the direction of sorting each pass
+    // Complexity: n^2
+    if (!shuffling){
+        await saltShakerSort();
+    }   
+}
+
 async function bogoSortEntry(){
+    // This sort works by finding which of the remaining elements should come next and placing it in the correct position
+    // Complexity: n!
     if (!runBogo && !shuffling){
         await bogoSort();
     }
@@ -380,7 +462,7 @@ async function decideSortEntry() {
 
 async function mergeSortEntry(){
     // This sort works by dividing the list into smaller lists, ordering the smaller lists, then merging the two lists together
-    // Complexity: log(n)
+    // Complexity: n log(n)
 
     if (!shuffling){
         shuffling = true;
@@ -392,6 +474,8 @@ async function mergeSortEntry(){
 }
 
 async function quickSortEntry(){
+    // This sort arranges all elements as being either greater than or less than a selected pivot
+    // Complexity: n log(n)
     if (!shuffling){
         shuffling = true;
         barArray = await quickSort(barArray, 0);
