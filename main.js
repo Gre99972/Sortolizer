@@ -349,6 +349,48 @@ async function gnomeSort(){
 
 }
 
+async function combSort() {
+    shuffling = true;
+
+    let elementSwapped = true;
+    let gapSize = barArray.length;
+    shuffling = true;
+    while (elementSwapped){
+        gapSize = gapSize/1.3;
+        let gap = Math.floor(gapSize);
+        elementSwapped = false;
+        for (let index = 0; index < barArray.length-gap; index++){
+            if (barArray[index+gap].value < barArray[index].value){
+                // Swap the indexes
+                let temp = barArray[index+gap];
+                barArray[index+gap] = barArray[index];
+                barArray[index+gap].SetIndex(index+gap);
+                barArray[index] = temp;
+                barArray[index].SetIndex(index);
+
+                barArray[index].SetColor(1);
+                barArray[index+gap].SetColor(1);
+                elementSwapped = true;
+            }
+            else {
+                barArray[index].SetColor(2);
+                barArray[index+gap].SetColor(2);  
+            }
+            playBleep(5, Math.floor(((((barArray[index].value)/(barArray.length) * 100) * 10) + 500)));
+            await drawBars();
+            await sleep(5);
+            barArray[index].SetColor(0);
+            barArray[index+gap].SetColor(0);         
+        }
+
+        await drawBars(); 
+    }    
+
+
+    greenPass();
+    shuffling = false;
+}
+
 async function mergeSort(subArray, trueArrayStartIndex){
     if (subArray.length > 1){
         let newArrayLength = Math.floor(subArray.length/2);
@@ -487,6 +529,24 @@ async function gnomeSortEntry(){
     // Complexity: n^2
     if (!shuffling){
         await gnomeSort();
+    }
+}
+
+async function combSortEntry() {
+    // This algorithm works like bubble sort but instead of comparing adjacent elements, it compares elements with a larger gap size
+    // (Imagine going through a list with a finer and finer comb)
+    // Complexity: omega(n^2 / 2^p)
+    if (!shuffling){
+        await combSort();
+    }
+}
+
+async function pancakeSortEntry() {
+    // This algorithm works like bubble sort but instead of comparing adjacent elements, it compares elements with a larger gap size
+    // (Imagine going through a list with a finer and finer comb)
+    // Complexity: omega(n^2 / 2^p)
+    if (!shuffling){
+        await pancakeSort();
     }
 }
 
