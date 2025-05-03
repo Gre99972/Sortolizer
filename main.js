@@ -2,6 +2,17 @@
 const canvas = document.getElementById("AlgorithmCanvas");
 const ctx = canvas.getContext("2d");
 
+// Setup Variables
+barArray = [];
+numBarsToMake = 200;
+circleCentreX = Math.round(canvas.width/2);
+circleCentreY = Math.round(canvas.height/2);
+minBarHeight = 50;
+maxBarHeight = 500;
+shuffling = false;
+sortArray = false;
+runBogo = false;
+
 // Note: Change the sorts so that a sort/shuffle cannot start unless the other sort is compelted (exception bogo)
 
 
@@ -22,6 +33,7 @@ class SortBar {
 
     Draw(){
         // Decide on the colour to fill the bar with
+        // Let's try to change this so that we draw it in a circle
         if (this.color === 0){ ctx.fillStyle = "white"; }
         else if (this.color === 1) { ctx.fillStyle = "red"; }
         else if (this.color === 2) { ctx.fillStyle = "green"; }
@@ -37,12 +49,6 @@ class SortBar {
     SetIndex(newIndex) { this.index = newIndex; }
     SetColor(newColor) { this.color = newColor; }
 }
-
-barArray = [];
-numBarsToMake = 200;
-shuffling = false;
-sortArray = false;
-runBogo = false;
 
 // Audio Stuff
 const audioCtx = new AudioContext({ sampleRate: 48000});
@@ -91,7 +97,7 @@ async function shuffleBars(fromBogo = false){
     shuffling = true;
     for (let index = (barArray.length - 1); index > 0; index--){
         // Find a random index past i (or i)
-        newIndex = Math.floor(Math.random() * i);
+        newIndex = Math.floor(Math.random() * index);
         
         // Swap the indexes
         temp = barArray[newIndex];
@@ -391,6 +397,57 @@ async function combSort() {
     shuffling = false;
 }
 
+async function reverseBarSubArray(endIndex){
+    // Part of pancake sort
+    for (let i = 0; i < Math.round(endIndex/2); i++){
+        let temp = barArray[endIndex-i];
+        barArray[endIndex-i] = barArray[i];
+        barArray[endIndex-i].SetIndex(endIndex-i);
+        barArray[i] = temp;
+        barArray[i].SetIndex(i);
+
+        /*barArray[i].SetColor(1);
+        barArray[endIndex-i].SetColor(1);
+        playBleep(5, Math.floor(((((barArray[i].value)/(barArray.length) * 100) * 10) + 500)));
+        await drawBars();
+        await sleep(5);
+        barArray[i].SetColor(0);
+        barArray[endIndex-i].SetColor(0);*/       
+    }
+    playBleep(20, Math.floor(((((barArray[endIndex].value)/(barArray.length) * 100) * 10) + 500)));
+    await drawBars();
+    await sleep(350);
+}
+
+async function pancakeSort(){
+    shuffling = true;
+    // Like selection, we find the next element we need. We then flip that element so it's the first element in the list
+    // We then flip the whole unsorted portion so that the next element that we need is in the correct position in the array
+    let numSortedElements = 0;
+    while (numSortedElements < barArray.length){
+        let nextElementToSort = 0;
+        // Find the element we want to flip (greatest element in unsorted array)
+        for (let i = 0; i < barArray.length-numSortedElements; i++){
+            if (barArray[i].value > barArray[nextElementToSort].value){
+                nextElementToSort = i;
+            }
+            barArray[i].SetColor(1);
+            playBleep(5, Math.floor(((((barArray[i].value)/(barArray.length) * 100) * 10) + 500)));
+            await drawBars();
+            await sleep(5);
+            barArray[i].SetColor(0);
+        }
+        if (nextElementToSort != 0){
+            await reverseBarSubArray(nextElementToSort);
+        }
+        await reverseBarSubArray(barArray.length - numSortedElements - 1);
+        numSortedElements++;
+    }
+
+    greenPass();
+    shuffling = false;
+}
+
 async function mergeSort(subArray, trueArrayStartIndex){
     if (subArray.length > 1){
         let newArrayLength = Math.floor(subArray.length/2);
@@ -542,9 +599,9 @@ async function combSortEntry() {
 }
 
 async function pancakeSortEntry() {
-    // This algorithm works like bubble sort but instead of comparing adjacent elements, it compares elements with a larger gap size
-    // (Imagine going through a list with a finer and finer comb)
-    // Complexity: omega(n^2 / 2^p)
+    // This algorithm works under the principle that the array is a stack of pancakes and the only way to sort them is to place a
+    // spatula between the elements and flip every element in some subset of the array
+    // Complexity: 
     if (!shuffling){
         await pancakeSort();
     }
