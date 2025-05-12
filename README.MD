@@ -2,7 +2,7 @@
 The Sortoliser was created to serve as a learning tool to help people understand the process behind a variety of sorting algorithms. It is written primarily in JavaScript and designed to be used and interacted with as a webpage. I hoped that, by making this project, I would be able to learn more about JavaScript and learn a variety of common sorting algorithms myself.
 
 # How to use
-The website is very easy to use. Just head to https://thesupernile.github.io/Sortolizer or visit the website hosted in the deployment section of GitHub
+The website is very easy to use. Just head to https://thesupernile.github.io/Sortolizer or visit the website hosted in the deployment section of this repository.
 Click the buttons to shuffle the list then choose the sorting algorithm you want to visualise. Once visualisation has started, the program will not allow you to visualise another algorithm or shuffle the bars until sorting is complete.
 
 # Features
