@@ -552,26 +552,26 @@ async function quickSort(subArray, trueArrayStartIndex){
 async function heapSort(arrayToSort){
     virtualArrayLength = (arrayToSort.length - 1);
     arrayToSort = await buildMaxHeap(arrayToSort);
-    for (let i = (arrayToSort.length - 1); i > 0; i--){
+    for (let i = (arrayToSort.length - 1); i >= 0; i--){
         // Swap arrayToSort[0] and arrayToSort[i]
         arrayToSort = await swapIndexes(arrayToSort, 0, i);
         virtualArrayLength = virtualArrayLength - 1;
-        arrayToSort = await heapify(arrayToSort, 1);
+        arrayToSort = await heapify(arrayToSort, 0);
     }
 
     return arrayToSort;
 }
 
 async function buildMaxHeap(arrayToSort){
-    for (let i = Math.floor(virtualArrayLength / 2); i > 0; i--){
+    for (let i = Math.floor(virtualArrayLength / 2); i >= 0; i--){
         arrayToSort = await heapify(arrayToSort, i);
     }
     return arrayToSort;
 }
 
 async function heapify(arrayToSort, i){
-    let leftElement = 2 * i - 1;
-    let rightElement = 2 * i;
+    let leftElement = 2 * i + 1;
+    let rightElement = 2 * i + 2;
     let maxElement = 0;
 
     if (leftElement < virtualArrayLength && arrayToSort[leftElement].value > arrayToSort[i].value){
