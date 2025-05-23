@@ -106,24 +106,10 @@ async function shuffleBars(fromBogo = false){
         // Find a random index past i (or i)
         newIndex = Math.floor(Math.random() * index);
         
-        // Swap the indexes
-        temp = barArray[newIndex];
-        barArray[newIndex] = barArray[index];
-        barArray[newIndex].SetIndex(newIndex);
-        barArray[index] = temp;
-        barArray[index].SetIndex(index);
-
-        // Changes colour of the bars, draws them, waits, then continues (resets the colour of bars as well)
-        barArray[index].SetColor(1);
-        barArray[newIndex].SetColor(1);
-        await drawBars();  
-        playBleep(5, Math.floor(((((barArray[newIndex].value)/(barArray.length) * 100) * 10) + 500)));
+        barArray = await swapIndexes(barArray, newIndex, index);
         if (!shuffling){
             break;
         }
-        await sleep(5);
-        barArray[index].SetColor(0);
-        barArray[newIndex].SetColor(0);
     }
     shuffling = false;
     await drawBars();
@@ -161,27 +147,10 @@ async function bubbleSort(){
         for (let index = 0; index < barArray.length-numIterations; index++){
             if (barArray[index+1].value < barArray[index].value){
                 // Swap the indexes
-                let temp = barArray[index+1];
-                barArray[index+1] = barArray[index];
-                barArray[index+1].SetIndex(index+1);
-                barArray[index] = temp;
-                barArray[index].SetIndex(index);
-
-                barArray[index].SetColor(1);
-                barArray[index+1].SetColor(1);
+                barArray = await swapIndexes(barArray, index, index + 1);
                 elementSwapped = true;
-            }
-            else {
-                barArray[index].SetColor(2);
-                barArray[index+1].SetColor(2);  
-            }
-            playBleep(5, Math.floor(((((barArray[index].value)/(barArray.length) * 100) * 10) + 500)));
-            await drawBars();
-            await sleep(5);
-            barArray[index].SetColor(0);
-            barArray[index+1].SetColor(0);         
+            }       
         }
-
         await drawBars(); 
     }
 
@@ -197,24 +166,11 @@ async function insertionSort(){
         let index = unsortedIndex;
         while (barArray[index].value < barArray[index-1].value){
             // Swap the elements
-            let temp = barArray[index-1];
-            barArray[index-1] = barArray[index];
-            barArray[index-1].SetIndex(index-1);
-            barArray[index] = temp;
-            barArray[index].SetIndex(index);
-
-            barArray[index].SetColor(1);
-            barArray[index-1].SetColor(1);
-            playBleep(5, Math.floor(((((barArray[index].value)/(barArray.length) * 100) * 10) + 500)));
-            await drawBars();
-            await sleep(5);
-            barArray[index].SetColor(0);
-            barArray[index-1].SetColor(0);
+            barArray = await swapIndexes(barArray, index, index - 1);
             if (index > 1) { index--; }
             else { break; }
         }
     }
-
     greenPass();
     shuffling = false;
 }
@@ -227,24 +183,8 @@ async function selectionSort(){
             // barArray[j] will be after barArray[i] in the array. So if barArray[j] is smaller, they need to be swapped
             if (barArray[index2].value < barArray[index1].value){
                 // Swap the indexes
-                let temp = barArray[index2];
-                barArray[index2] = barArray[index1];
-                barArray[index2].SetIndex(index2);
-                barArray[index1] = temp;
-                barArray[index1].SetIndex(index1);
-
-                barArray[index1].SetColor(1);
-                barArray[index2].SetColor(1);
+                barArray = await swapIndexes(barArray, index1, index2);
             }
-            else{
-                barArray[index1].SetColor(2);
-                barArray[index2].SetColor(2);       
-            }
-            playBleep(5, Math.floor(((((barArray[index2].value)/(barArray.length) * 100) * 10) + 500)));
-            await drawBars();
-            await sleep(5);
-            barArray[index1].SetColor(0);
-            barArray[index2].SetColor(0); 
         }
     }
     await drawBars();
@@ -255,7 +195,6 @@ async function selectionSort(){
 }
 
 async function saltShakerSort(){
-
     let elementSwapped = true;
     let numIterations = 0;
     shuffling = true;
@@ -266,51 +205,18 @@ async function saltShakerSort(){
             for (let index = Math.floor(numIterations/2); index < barArray.length-Math.floor(numIterations/2) - 1; index++){
                 if (barArray[index+1].value < barArray[index].value){
                     // Swap the indexes
-                    let temp = barArray[index+1];
-                    barArray[index+1] = barArray[index];
-                    barArray[index+1].SetIndex(index+1);
-                    barArray[index] = temp;
-                    barArray[index].SetIndex(index);
-
-                    barArray[index].SetColor(1);
-                    barArray[index+1].SetColor(1);
+                    barArray = await swapIndexes(barArray, index, index + 1);
                     elementSwapped = true;
-                }
-                else {
-                    barArray[index].SetColor(2);
-                    barArray[index+1].SetColor(2);  
-                }
-                playBleep(5, Math.floor(((((barArray[index].value)/(barArray.length) * 100) * 10) + 500)));
-                await drawBars();
-                await sleep(5);
-                barArray[index].SetColor(0);
-                barArray[index+1].SetColor(0);         
+                }       
             }
         }
         else{
             for (let index = barArray.length-Math.floor(numIterations/2) - 1; index > Math.floor(numIterations/2)-1; index--){
                 if (barArray[index-1].value > barArray[index].value){
                     // Swap the indexes
-                    let temp = barArray[index-1];
-                    barArray[index-1] = barArray[index];
-                    barArray[index-1].SetIndex(index-1);
-                    barArray[index] = temp;
-                    barArray[index].SetIndex(index);
-
-                    barArray[index].SetColor(1);
-                    barArray[index-1].SetColor(1);
+                    barArray = await swapIndexes(barArray, index, index - 1);
                     elementSwapped = true;
-                }
-                else {
-                    barArray[index].SetColor(2);
-                    barArray[index-1].SetColor(2);  
-                }
-                playBleep(5, Math.floor(((((barArray[index].value)/(barArray.length) * 100) * 10) + 500)));
-                await drawBars();
-                await sleep(5);
-                barArray[index].SetColor(0);
-                barArray[index-1].SetColor(0); 
-                barArray[index+1].SetColor(0);         
+                }       
             }        
         }
 
@@ -328,29 +234,10 @@ async function gnomeSort(){
     while (i < barArray.length - 1){
         if (barArray[i].value > barArray[i+1].value){
             // Swap indexes
-            let temp = barArray[i+1];
-            barArray[i+1] = barArray[i];
-            barArray[i+1].SetIndex(i+1);
-            barArray[i] = temp;
-            barArray[i].SetIndex(i);
-
-            barArray[i].SetColor(3);
-            barArray[i+1].SetColor(1);
-            playBleep(5, Math.floor(((((barArray[i].value)/(barArray.length) * 100) * 10) + 500)));
-            await drawBars();
-            await sleep(5);
-            barArray[i].SetColor(0);
-            barArray[i+1].SetColor(0);
+            barArray = await swapIndexes(barArray, i, i + 1)
             // Move back one
             if (i > 0){
                 i--;
-                barArray[i].SetColor(3);
-                barArray[i+1].SetColor(2);
-                playBleep(5, Math.floor(((((barArray[i].value)/(barArray.length) * 100) * 10) + 500)));
-                await drawBars();
-                await sleep(5);
-                barArray[i].SetColor(0);
-                barArray[i+1].SetColor(0);
             }
         }
         else{
@@ -359,7 +246,6 @@ async function gnomeSort(){
     }
     shuffling = false;
     greenPass();
-
 }
 
 async function combSort() {
@@ -368,34 +254,17 @@ async function combSort() {
     let elementSwapped = true;
     let gapSize = barArray.length;
     shuffling = true;
-    while (elementSwapped){
+    while (elementSwapped || gapSize > 1){
         gapSize = gapSize/1.3;
         let gap = Math.floor(gapSize);
         elementSwapped = false;
         for (let index = 0; index < barArray.length-gap; index++){
             if (barArray[index+gap].value < barArray[index].value){
                 // Swap the indexes
-                let temp = barArray[index+gap];
-                barArray[index+gap] = barArray[index];
-                barArray[index+gap].SetIndex(index+gap);
-                barArray[index] = temp;
-                barArray[index].SetIndex(index);
-
-                barArray[index].SetColor(1);
-                barArray[index+gap].SetColor(1);
+                barArray = await swapIndexes(barArray, index + gap, index);
                 elementSwapped = true;
-            }
-            else {
-                barArray[index].SetColor(2);
-                barArray[index+gap].SetColor(2);  
-            }
-            playBleep(5, Math.floor(((((barArray[index].value)/(barArray.length) * 100) * 10) + 500)));
-            await drawBars();
-            await sleep(5);
-            barArray[index].SetColor(0);
-            barArray[index+gap].SetColor(0);         
+            }      
         }
-
         await drawBars(); 
     }    
 
