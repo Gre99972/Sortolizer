@@ -4,7 +4,7 @@ const ctx = canvas.getContext("2d");
 
 // Setup Variables
 barArray = [];
-numBarsToMake = 200;
+numBarsToMake = 150;
 circleCentreX = Math.round(canvas.width/2);
 circleCentreY = Math.round(canvas.height/2);
 minBarHeight = 50;
@@ -616,14 +616,30 @@ async function swapIndexes(array, index1, index2) {
 }
 
 // Algorithms for odd even sort // 
-async function oddEvenSort(){
+async function oddEvenSort(arrayToSort){
     // Works similarly to bubble sort but compares pairs of odd and even indexed elements (eg. in list 1, 5, 9, 7
     // it compares 1, 5 and 7, 9. Then second pass compares 5, 7 (which is now in position 2 instead of 9). )
     // Complexity: n^2
+    let sorted = false;
 
-    
+    while (sorted == false){
+        sorted = true;
+        for (let i = 0; i < arrayToSort.length - 1; i += 2){
+            if (arrayToSort[i + 1].value <= arrayToSort[i].value){
+                arrayToSort = await swapIndexes(arrayToSort, i, i+1);
+                sorted = false;
+            }
+        }
+        for (let i = 1; i < arrayToSort.length - 1; i += 2){
+            if (arrayToSort[i + 1].value <= arrayToSort[i].value){
+                arrayToSort = await swapIndexes(arrayToSort, i, i+1);
+                sorted = false;
+            }
+        }
+    }
+
+    return arrayToSort;
 }
-
 
 // Entry to each algorithm
 
