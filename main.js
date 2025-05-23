@@ -575,14 +575,14 @@ async function heapify(arrayToSort, i){
     let rightElement = 2 * i + 1;
     let maxElement = 0;
 
-    if (leftElement <= n && arrayToSort[leftElement] > arrayToSort[i]){
+    if (leftElement <= n && arrayToSort[leftElement].value > arrayToSort[i].value){
         maxElement = leftElement;
     }
     else {
         maxElement = i;
     }
 
-    if (rightElement <= n && arrayToSort[rightElement] > arrayToSort[maxElement]){
+    if (rightElement <= n && arrayToSort[rightElement].value > arrayToSort[maxElement].value){
         maxElement = rightElement;
     }
 
