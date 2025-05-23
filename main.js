@@ -4,11 +4,12 @@ const ctx = canvas.getContext("2d");
 
 // Setup Variables
 barArray = [];
-numBarsToMake = 200;
+numBarsToMake = 50;
 circleCentreX = Math.round(canvas.width/2);
 circleCentreY = Math.round(canvas.height/2);
 minBarHeight = 50;
 maxBarHeight = 500;
+drawStyle = "rectangle";
 shuffling = false;
 sortArray = false;
 runBogo = false;
@@ -34,13 +35,19 @@ class SortBar {
     Draw(){
         // Decide on the colour to fill the bar with
         // Let's try to change this so that we draw it in a circle
-        if (this.color === 0){ ctx.fillStyle = "white"; }
-        else if (this.color === 1) { ctx.fillStyle = "red"; }
-        else if (this.color === 2) { ctx.fillStyle = "green"; }
-        else if (this.color === 3) { ctx.fillStyle = "blue"; }
-        else { ctx.fillStyle = "white"; }
+        if (drawStyle === "rectangle"){
+            if (this.color === 0){ ctx.fillStyle = "white"; }
+            else if (this.color === 1) { ctx.fillStyle = "red"; }
+            else if (this.color === 2) { ctx.fillStyle = "green"; }
+            else if (this.color === 3) { ctx.fillStyle = "blue"; }
+            else { ctx.fillStyle = "white"; }
 
-        ctx.fillRect((this.index * (this.width + 1)),(canvas.height - this.height),this.width,this.height);
+            ctx.fillRect((this.index * (this.width + 1)),(canvas.height - this.height),this.width,this.height);
+        }
+        else if (drawStyle == "circle"){
+            // Implement code to draw bars as sectors of a circle instead of bars in a row (little more fun and unique)
+            
+        }
     }
 
     SetWidth(newWidth) { this.width = newWidth; }
@@ -540,6 +547,55 @@ async function quickSort(subArray, trueArrayStartIndex){
     return subArray;
 }
 
+// Functions required for Heap Sort
+
+async function heapSort(arrayToSort){
+    buildMaxHeap(arrayToSort);
+    for (let i = arrayToSort.length; i > 0; i--){
+        // Swap arrayToSort[0] and arrayToSort[i]
+        arrayToSort = swapIndexes(arrayToSort, 0, i);
+        n = n - 1;
+        heapify(arrayToSort, 1);
+    }
+}
+
+async function buildMaxHeap(arrayToSort){
+    n = arrayToSort.length;
+    for (let i = Math.floor(arrayToSort.length / 2); i > 0; i--){
+        heapify(arrayToSort, i);
+    }
+}
+
+async function heapify(arrayToSort, i){
+    let left = 2 * i;
+    let right = 2 * i + 1;
+
+    if (left <= arrayToSort.length && arrayToSort[left] > arrayToSort[i]){
+        let max = left;
+    }
+    else {
+        max = i;
+    }
+
+    if (right <= n && arrayToSort[right] > arrayToSort[max]){
+        max = right;
+    }
+
+    if (max != i){
+        arrayToSort = swapIndexes(arrayToSort, index1, index2);
+        heapify(arrayToSort, max);
+    }
+}
+
+function swapIndexes(array, index1, index2) {
+    temp = array[index2];
+    index2 = array[index1];
+    index1 = temp;
+    return array;
+}
+
+// Entry to each algorithm
+
 async function shuffleBarsEntry(){
     if (!shuffling){
         await shuffleBars();
@@ -645,6 +701,18 @@ async function quickSortEntry(){
     if (!shuffling){
         shuffling = true;
         barArray = await quickSort(barArray, 0);
+        await drawBars();
+        await greenPass();
+        shuffling = false;
+    }
+}
+
+async function heapSortEntry(){
+    // This sort uses ordered trees (heaps) to reduce the number of comparisons needed to sort the list
+    // Complexity: n log(n)
+    if (!shuffling){
+        shuffling = true;
+        barArray = await heapSort(barArray);
         await drawBars();
         await greenPass();
         shuffling = false;
