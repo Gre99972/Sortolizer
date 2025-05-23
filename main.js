@@ -550,47 +550,69 @@ async function quickSort(subArray, trueArrayStartIndex){
 // Functions required for Heap Sort
 
 async function heapSort(arrayToSort){
-    buildMaxHeap(arrayToSort);
-    for (let i = arrayToSort.length; i > 0; i--){
+    arrayToSort = buildMaxHeap(arrayToSort);
+    for (let i = (arrayToSort.length - 1); i > 0; i--){
         // Swap arrayToSort[0] and arrayToSort[i]
-        arrayToSort = swapIndexes(arrayToSort, 0, i);
+        arrayToSort = await swapIndexes(arrayToSort, 0, i);
         n = n - 1;
-        heapify(arrayToSort, 1);
+        arrayToSort = await heapify(arrayToSort, 1);
     }
+
+    return arrayToSort;
 }
 
 async function buildMaxHeap(arrayToSort){
-    n = arrayToSort.length;
-    for (let i = Math.floor(arrayToSort.length / 2); i > 0; i--){
-        heapify(arrayToSort, i);
+    n = (arrayToSort.length - 1);
+    for (let i = Math.floor(n / 2); i > 0; i--){
+        arrayToSort = await heapify(arrayToSort, i);
     }
+
+    return arrayToSort;
 }
 
 async function heapify(arrayToSort, i){
-    let left = 2 * i;
-    let right = 2 * i + 1;
+    let leftElement = 2 * i;
+    let rightElement = 2 * i + 1;
+    let maxElement = 0;
 
-    if (left <= arrayToSort.length && arrayToSort[left] > arrayToSort[i]){
-        let max = left;
+    if (leftElement <= n && arrayToSort[leftElement] > arrayToSort[i]){
+        maxElement = leftElement;
     }
     else {
-        max = i;
+        maxElement = i;
     }
 
-    if (right <= n && arrayToSort[right] > arrayToSort[max]){
-        max = right;
+    if (rightElement <= n && arrayToSort[rightElement] > arrayToSort[maxElement]){
+        maxElement = rightElement;
     }
 
-    if (max != i){
-        arrayToSort = swapIndexes(arrayToSort, index1, index2);
-        heapify(arrayToSort, max);
+    if (maxElement != i){
+        arrayToSort = await swapIndexes(arrayToSort, i, maxElement);
+        arrayToSort = await heapify(arrayToSort, maxElement);
     }
+
+    return arrayToSort;
 }
 
-function swapIndexes(array, index1, index2) {
+async function swapIndexes(array, index1, index2) {
     temp = array[index2];
-    index2 = array[index1];
-    index1 = temp;
+    array[index2] = array[index1];
+    array[index1] = temp;
+
+    array[index1].SetIndex(index1);
+    array[index2].SetIndex(index2);
+
+    // Visuals
+
+    array[index1].SetColor(1);
+    array[index2].SetColor(1);
+
+    await playBleep(5, Math.floor(((((array[index1].value)/(barArray.length) * 100) * 10) + 500)));
+    await drawBars();
+    await sleep(5);
+    array[index1].SetColor(0);
+    array[index2].SetColor(0);
+
     return array;
 }
 
