@@ -4,7 +4,7 @@ const ctx = canvas.getContext("2d");
 
 // Setup Variables
 barArray = [];
-numBarsToMake = 50;
+numBarsToMake = 200;
 circleCentreX = Math.round(canvas.width/2);
 circleCentreY = Math.round(canvas.height/2);
 minBarHeight = 50;
@@ -550,7 +550,7 @@ async function quickSort(subArray, trueArrayStartIndex){
 // Functions required for Heap Sort
 
 async function heapSort(arrayToSort){
-    virtualArrayLength = (arrayToSort.length - 1);
+    virtualArrayLength = (arrayToSort.length);
     arrayToSort = await buildMaxHeap(arrayToSort);
     for (let i = (arrayToSort.length - 1); i >= 0; i--){
         // Swap arrayToSort[0] and arrayToSort[i]
@@ -614,6 +614,16 @@ async function swapIndexes(array, index1, index2) {
 
     return array;
 }
+
+// Algorithms for odd even sort // 
+async function oddEvenSort(){
+    // Works similarly to bubble sort but compares pairs of odd and even indexed elements (eg. in list 1, 5, 9, 7
+    // it compares 1, 5 and 7, 9. Then second pass compares 5, 7 (which is now in position 2 instead of 9). )
+    // Complexity: n^2
+
+    
+}
+
 
 // Entry to each algorithm
 
@@ -734,6 +744,16 @@ async function heapSortEntry(){
     if (!shuffling){
         shuffling = true;
         barArray = await heapSort(barArray);
+        await drawBars();
+        await greenPass();
+        shuffling = false;
+    }
+}
+
+async function oddEvenSortEntry(){
+    if (!shuffling){
+        shuffling = true;
+        barArray = await oddEvenSort(barArray);
         await drawBars();
         await greenPass();
         shuffling = false;
