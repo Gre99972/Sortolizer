@@ -515,9 +515,11 @@ async function radixSort(arrayToSort){
     // Temp code //
     let maxPlaceValue = 3;
     // Radix sort works by placing numbers into "buckets" based on their least significant digit.
-    for (let i = 1; i <= maxPlaceValue; i++){
-        let buckets = [[]];
-        buckets.length = 10;
+    for (let i = 0; i < maxPlaceValue; i++){
+        let buckets = [];
+        for (let j = 0; j < 10; j++){
+            buckets.push([]);
+        }
 
         for (let j = 0; j < arrayToSort.length; j++){
             digit = await getDigitAtPlace(arrayToSort[j].value, i);
@@ -527,15 +529,22 @@ async function radixSort(arrayToSort){
         // Adjust the indexes to reflect the change in position //
         let totalLength = 0;
         for (let j = 0; j < buckets.length; j++){
+            bucket = buckets[j];
             for (let k = 0; k < bucket.length; k++){
                 bucket[k].SetIndex(totalLength);
+                bucket[k].SetColor(1);
+                await drawBars();
+                await playBleep(5, Math.floor(((((bucket[k].value)/(barArray.length) * 100) * 10) + 500)));
+                await sleep(5);
+                bucket[k].SetColor(0);
                 totalLength++;
             }
         }
 
         let tempSortedArray = [];
-        for (bucket in buckets){
-            tempSortedArray.concat(bucket);
+        for (let j = 0; j < buckets.length; j++){
+            bucket = buckets[j];
+            tempSortedArray = tempSortedArray.concat(bucket);
         }
         arrayToSort = tempSortedArray;
     }
@@ -545,6 +554,12 @@ async function radixSort(arrayToSort){
 
 async function getDigitAtPlace(value, place){
     return Math.floor(value / ( Math.pow(10, place) ) ) % 10;
+}
+
+// Algorithms for shell sort //
+
+async function shellSort(){
+    
 }
 
 // Entry to each algorithm
@@ -604,6 +619,16 @@ async function combSortEntry() {
     // Complexity: omega(n^2 / 2^p)
     if (!shuffling){
         await combSort();
+    }
+}
+
+async function shellSortEntry(){
+    if (!shuffling){
+        shuffling = true;
+        barArray = await shellSort(barArray);
+        await drawBars();
+        await greenPass();
+        shuffling = false;
     }
 }
 
