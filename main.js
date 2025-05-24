@@ -462,28 +462,6 @@ async function heapify(arrayToSort, i){
     return arrayToSort;
 }
 
-async function swapIndexes(array, index1, index2) {
-    temp = array[index2];
-    array[index2] = array[index1];
-    array[index1] = temp;
-
-    array[index1].SetIndex(index1);
-    array[index2].SetIndex(index2);
-
-    // Visuals
-
-    array[index1].SetColor(1);
-    array[index2].SetColor(1);
-
-    await playBleep(5, Math.floor(((((array[index1].value)/(barArray.length) * 100) * 10) + 500)));
-    await drawBars();
-    await sleep(5);
-    array[index1].SetColor(0);
-    array[index2].SetColor(0);
-
-    return array;
-}
-
 // Algorithms for odd even sort // 
 async function oddEvenSort(arrayToSort){
     // Works similarly to bubble sort but compares pairs of odd and even indexed elements (eg. in list 1, 5, 9, 7
@@ -558,8 +536,24 @@ async function getDigitAtPlace(value, place){
 
 // Algorithms for shell sort //
 
-async function shellSort(){
+async function shellSort(arrayToSort){
+    let gapSize = arrayToSort.length;
     
+    while (gapSize > 1){
+        gapSize = Math.floor(gapSize / 1.3);
+        for (let i = gapSize; i < arrayToSort.length; i++){
+            let index = i;
+            while (arrayToSort[index].value < arrayToSort[index-gapSize].value){
+                // Swap the elements
+                arrayToSort = await swapIndexes(arrayToSort, index, index - gapSize);
+                if ((index - gapSize) > gapSize) { index -= gapSize; }
+                else { break; }
+            }
+            //await correctOrderComparison(arrayToSort, index, index - gapSize);
+        }
+    }
+
+    return arrayToSort;
 }
 
 // Entry to each algorithm
@@ -738,3 +732,35 @@ window.onload = window.onresize = function() {
     adjustBarSize();
     drawBars();     
 }
+
+async function swapIndexes(array, index1, index2) {
+    temp = array[index2];
+    array[index2] = array[index1];
+    array[index1] = temp;
+
+    array[index1].SetIndex(index1);
+    array[index2].SetIndex(index2);
+
+    // Visuals
+
+    array[index1].SetColor(1);
+    array[index2].SetColor(1);
+
+    await playBleep(5, Math.floor(((((array[index1].value)/(barArray.length) * 100) * 10) + 500)));
+    await drawBars();
+    await sleep(5);
+    array[index1].SetColor(0);
+    array[index2].SetColor(0);
+
+    return array;
+}
+
+/*async function correctOrderComparison(array, index1, index2){
+    array[index1].SetColor(2);
+    array[index2].SetColor(2);
+    await playBleep(5, Math.floor(((((array[index1].value)/(barArray.length) * 100) * 10) + 500)));
+    await drawBars();
+    await sleep(5);
+    array[index1].SetColor(0);
+    array[index2].SetColor(0);
+}*/
