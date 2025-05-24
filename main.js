@@ -510,6 +510,42 @@ async function oddEvenSort(arrayToSort){
     return arrayToSort;
 }
 
+// Algorithms for radix sort
+async function radixSort(arrayToSort){
+    // Temp code //
+    let maxPlaceValue = 3;
+    // Radix sort works by placing numbers into "buckets" based on their least significant digit.
+    for (let i = 1; i <= maxPlaceValue; i++){
+        let buckets = [[]];
+        buckets.length = 10;
+
+        for (let j = 0; j < arrayToSort.length; j++){
+            digit = getDigitAtPlace(arrayToSort[j].value, i);
+            buckets[digit].push(arrayToSort[j]);
+        }
+
+        // Adjust the indexes to reflect the change in position //
+        for (let j = 0; j < buckets.length; j++){
+            bucket = buckets[j];
+            for (let k = 0; k < bucket.length; k++){
+                
+            }
+        }
+
+        let tempSortedArray = [];
+        for (bucket in buckets){
+            tempSortedArray.concat(bucket);
+        }
+        arrayToSort = tempSortedArray;
+    }
+
+    return arrayToSort;
+}
+
+async function getDigitAtPlace(value, place){
+    return Math.floor(value / ( Math.pow(10, place) ) );
+}
+
 // Entry to each algorithm
 
 async function shuffleBarsEntry(){
@@ -639,6 +675,16 @@ async function oddEvenSortEntry(){
     if (!shuffling){
         shuffling = true;
         barArray = await oddEvenSort(barArray);
+        await drawBars();
+        await greenPass();
+        shuffling = false;
+    }
+}
+
+async function radixSortEntry(){
+    if (!shuffling){
+        shuffling = true;
+        barArray = await radixSort(barArray);
         await drawBars();
         await greenPass();
         shuffling = false;
