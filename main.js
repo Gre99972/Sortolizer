@@ -520,15 +520,16 @@ async function radixSort(arrayToSort){
         buckets.length = 10;
 
         for (let j = 0; j < arrayToSort.length; j++){
-            digit = getDigitAtPlace(arrayToSort[j].value, i);
+            digit = await getDigitAtPlace(arrayToSort[j].value, i);
             buckets[digit].push(arrayToSort[j]);
         }
 
         // Adjust the indexes to reflect the change in position //
+        let totalLength = 0;
         for (let j = 0; j < buckets.length; j++){
-            bucket = buckets[j];
             for (let k = 0; k < bucket.length; k++){
-                
+                bucket[k].SetIndex(totalLength);
+                totalLength++;
             }
         }
 
@@ -543,7 +544,7 @@ async function radixSort(arrayToSort){
 }
 
 async function getDigitAtPlace(value, place){
-    return Math.floor(value / ( Math.pow(10, place) ) );
+    return Math.floor(value / ( Math.pow(10, place) ) ) % 10;
 }
 
 // Entry to each algorithm
