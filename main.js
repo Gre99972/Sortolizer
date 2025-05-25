@@ -4,7 +4,7 @@ const ctx = canvas.getContext("2d");
 
 // Setup Variables
 barArray = [];
-numBarsToMake = 150;
+numBarsToMake = 256;
 circleCentreX = Math.round(canvas.width/2);
 circleCentreY = Math.round(canvas.height/2);
 minBarHeight = 50;
@@ -87,14 +87,18 @@ function sleep(ms){
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-function playBleep(duration, frequency = 1000) {
+async function playBleep(duration, frequency = 1000) {
+    let decay = 0.05;
+    let currentTime = audioCtx.currentTime;
     const oscNode = new OscillatorNode(audioCtx, {type: "square", frequency: frequency});
-    const gainNode = new GainNode(audioCtx, {gain: 0.05});
+    const gainNode = new GainNode(audioCtx, {gain: 0});
     oscNode.connect(gainNode).connect(audioCtx.destination);
 
-    oscNode.frequency.setValueAtTime(frequency, audioCtx.currentTime);
-    oscNode.start();
-    setTimeout(() => oscNode.stop(), duration);
+    oscNode.frequency.setValueAtTime(frequency, currentTime);
+    oscNode.start(currentTime);
+    gainNode.gain.linearRampToValueAtTime(0.05, currentTime + 0.001);
+    gainNode.gain.linearRampToValueAtTime(0, currentTime + decay + 0.001);
+    oscNode.stop(currentTime + decay + 0.001);
 }
 
 async function shuffleBars(fromBogo = false){
