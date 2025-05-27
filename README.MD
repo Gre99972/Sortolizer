@@ -3,10 +3,10 @@ The Sortoliser was created to serve as a learning tool to help people understand
 
 # How to use
 The website is very easy to use. Just head to https://thesupernile.github.io/Sortolizer or visit the website hosted in the deployment section of this repository.
-Click the buttons to shuffle the list then choose the sorting algorithm you want to visualise. Once visualisation has started, the program will not allow you to visualise another algorithm or shuffle the bars until sorting is complete.
+Click the button to shuffle the list then choose the sorting algorithm you want to visualise. Once visualisation has started, the program will not allow you to visualise another algorithm or shuffle the bars until sorting is complete. If you want to cancel the visualisation, you will need to reload the page
 
 # Features
-* Full Visualisation of over ten different sorting algorithms
+* Full Visualisation of sixteen different sorting algorithms
 * Sound effects when bars are swapped
 
 # Implemented Algorithms
@@ -15,12 +15,18 @@ Click the buttons to shuffle the list then choose the sorting algorithm you want
 * Bubble Sort
 * Insertion Sort
 * Selection Sort
+
 * Shaker Sort
-* Comb Sort
+* Odd Even Sort
 * Gnome Sort
 * Pancake Sort
+* Radix Sort
+
+* Comb Sort
+* Shell Sort
 
 * Merge Sort
+* Heap Sort
 * Quick Sort
 
 * Bogo Sort

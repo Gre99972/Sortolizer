@@ -4,7 +4,7 @@ const ctx = canvas.getContext("2d");
 
 // Setup Variables
 barArray = [];
-numBarsToMake = 256;
+numBarsToMake = 200;
 circleCentreX = Math.round(canvas.width/2);
 circleCentreY = Math.round(canvas.height/2);
 minBarHeight = 50;
