@@ -4,6 +4,7 @@ const ctx = canvas.getContext("2d");
 
 // Setup Variables
 barArray = [];
+lastShuffledBarArray = [];
 numBarsToMake = 200;
 circleCentreX = Math.round(canvas.width/2);
 circleCentreY = Math.round(canvas.height/2);
@@ -565,6 +566,18 @@ async function shellSort(arrayToSort){
 async function shuffleBarsEntry(){
     if (!shuffling){
         await shuffleBars();
+    }
+    for (let i = 0; i < barArray.length; i++){
+        lastShuffledBarArray[barArray[i].value] = barArray[i].index;
+    }
+}
+
+function loadLastShuffledBars(){
+    if (!shuffling && lastShuffledBarArray != []){
+        for (let i = 0; i < barArray.length; i++){
+            barArray[i].index = lastShuffledBarArray[barArray[i].value];
+        }
+        drawBars();
     }
 }
 
