@@ -744,8 +744,8 @@ createBars();
 // Resizes the canvas when the window is resized
 window.onload = window.onresize = function() {
     var canvas = document.getElementById("AlgorithmCanvas");
-    canvas.width = window.innerWidth * 0.9;
-    canvas.height = window.innerHeight * 0.7;
+    canvas.width = window.innerWidth * 0.91;
+    canvas.height = window.innerHeight * 0.64;
     adjustBarSize();
     drawBars();     
 }

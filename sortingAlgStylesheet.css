@@ -8,6 +8,11 @@ h1 {
     font-size: 60;
 }
 
+button {
+    width: 19%;
+    height: 10%;
+}
+
 p {
     color: limegreen;
 }
