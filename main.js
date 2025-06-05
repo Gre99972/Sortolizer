@@ -5,7 +5,7 @@ const ctx = canvas.getContext("2d");
 // Setup Variables
 barArray = [];
 lastShuffledBarArray = [];
-numBarsToMake = 200;
+numBarsToMake = 100;
 circleCentreX = Math.round(canvas.width/2);
 circleCentreY = Math.round(canvas.height/2);
 minBarHeight = 50;
@@ -154,7 +154,10 @@ async function bubbleSort(){
                 // Swap the indexes
                 barArray = await swapIndexes(barArray, index, index + 1);
                 elementSwapped = true;
-            }       
+            }
+            else{
+                await sleep(5);
+            }             
         }
         await drawBars(); 
     }
@@ -173,7 +176,7 @@ async function insertionSort(){
             // Swap the elements
             barArray = await swapIndexes(barArray, index, index - 1);
             if (index > 1) { index--; }
-            else { break; }
+            else { await sleep(5); break; }
         }
     }
     greenPass();
@@ -190,6 +193,9 @@ async function selectionSort(){
                 // Swap the indexes
                 barArray = await swapIndexes(barArray, index1, index2);
             }
+            else{
+                await sleep(5);
+            }      
         }
     }
     await drawBars();
@@ -212,7 +218,10 @@ async function saltShakerSort(){
                     // Swap the indexes
                     barArray = await swapIndexes(barArray, index, index + 1);
                     elementSwapped = true;
-                }       
+                }  
+                else{
+                    await sleep(5);
+                }           
             }
         }
         else{
@@ -221,7 +230,10 @@ async function saltShakerSort(){
                     // Swap the indexes
                     barArray = await swapIndexes(barArray, index, index - 1);
                     elementSwapped = true;
-                }       
+                }
+                else{
+                    await sleep(5);
+                }            
             }        
         }
 
@@ -268,6 +280,9 @@ async function combSort() {
                 // Swap the indexes
                 barArray = await swapIndexes(barArray, index + gap, index);
                 elementSwapped = true;
+            }
+            else{
+                await sleep(5);
             }      
         }
         await drawBars(); 
@@ -576,6 +591,7 @@ function loadLastShuffledBars(){
     if (!shuffling && lastShuffledBarArray != []){
         for (let i = 0; i < barArray.length; i++){
             barArray[i].index = lastShuffledBarArray[barArray[i].value];
+            barArray[i].SetColor(0);
         }
         drawBars();
     }
