@@ -11,6 +11,7 @@ circleCentreY = Math.round(canvas.height/2);
 minBarHeight = 50;
 maxBarHeight = 500;
 drawStyle = "rectangle";
+arraySuffledBefore = false;
 shuffling = false;
 sortArray = false;
 runBogo = false;
@@ -583,15 +584,31 @@ async function shuffleBarsEntry(){
         await shuffleBars();
     }
     for (let i = 0; i < barArray.length; i++){
+        // Store the value of the bar at each index. This allows us to reconstruct the array without having to copy a lot of bar objects
         lastShuffledBarArray[barArray[i].value] = barArray[i].index;
     }
+    arraySuffledBefore = true;
 }
 
 function loadLastShuffledBars(){
-    if (!shuffling && lastShuffledBarArray != []){
+    if (!shuffling && arraySuffledBefore == true){
         for (let i = 0; i < barArray.length; i++){
+            // Change the index of the element to it's last unshuffled position
             barArray[i].index = lastShuffledBarArray[barArray[i].value];
             barArray[i].SetColor(0);
+
+            if (barArray[i] != barArray[barArray[i].index]){
+                // Swap the bar into the place dictated by it's index
+                index = barArray[i].index;
+                temp = barArray[barArray[i].index];
+                barArray[barArray[i].index] = barArray[i];
+                barArray[i] = temp;
+                // Sets the index to one before the smaller of the two bar's indexes (ensures all bars get sorted)
+                if (i > index - 1){
+                    i = index - 1;
+                }
+                else{ i = i - 1; }
+            }
         }
         drawBars();
     }
