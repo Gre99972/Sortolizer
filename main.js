@@ -5,7 +5,7 @@ const ctx = canvas.getContext("2d");
 // Setup Variables
 barArray = [];
 lastShuffledBarArray = [];
-numBarsToMake = 100;
+numBarsToMake = 256;
 circleCentreX = Math.round(canvas.width/2);
 circleCentreY = Math.round(canvas.height/2);
 minBarHeight = 50;
@@ -577,6 +577,40 @@ async function shellSort(arrayToSort){
     return arrayToSort;
 }
 
+// Algorithms for bitonic sort
+async function bitonicSort(listToSort){
+    listToSort = bitonicBuild(listToSort);
+    listToSort = bitonicSplit(listToSort);
+
+    return listToSort;
+}
+
+async function bitonicSplit(bitonicListToSplit){
+    // Cuts the bitonic list into two smaller ones, where all the elements in the first bitonic sequence are
+    // smaller than the elements in the second bitonic sequence (on an element by element basis)
+    if (bitonicListToSplit.length >= 0){
+        for (let i = 0; i < bitonicListToSplit.length / 2; i++){
+            let n = bitonicListToSplit.length / 2 + i;
+            if (bitonicListToSplit[i].value > bitonicListToSplit[n].value){
+                listToSort = swapIndexes(bitonicListToSplit, i, n);
+            }
+            else{ await sleep(5); }
+        }
+        smallerSubList = listToSort.slice();
+        largerSubList = ;
+
+        listToSort = smallerSubList.concat(largerSubList);
+    }
+
+    return listToSort;
+}
+
+async function bitonicBuild(listToBuild){
+    // Makes the original list into a bitonic one (all elements are in ascending then descending order)
+
+
+}
+
 // Entry to each algorithm
 
 async function shuffleBarsEntry(){
@@ -755,6 +789,16 @@ async function radixSortEntry(){
     if (!shuffling){
         shuffling = true;
         barArray = await radixSort(barArray);
+        await drawBars();
+        await greenPass();
+        shuffling = false;
+    }
+}
+
+async function bitonicSortEntry(){
+    if (!shuffling){
+        shuffling = true;
+        barArray = await bitonicSort(barArray);
         await drawBars();
         await greenPass();
         shuffling = false;
