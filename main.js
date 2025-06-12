@@ -588,7 +588,7 @@ async function bitonicSort(listToSort){
 async function bitonicSplit(bitonicListToSplit){
     // Cuts the bitonic list into two smaller ones, where all the elements in the first bitonic sequence are
     // smaller than the elements in the second bitonic sequence (on an element by element basis)
-    if (bitonicListToSplit.length >= 0){
+    if (bitonicListToSplit.length > 2){
         for (let i = 0; i < bitonicListToSplit.length / 2; i++){
             let n = bitonicListToSplit.length / 2 + i;
             if (bitonicListToSplit[i].value > bitonicListToSplit[n].value){
@@ -596,8 +596,13 @@ async function bitonicSplit(bitonicListToSplit){
             }
             else{ await sleep(5); }
         }
-        smallerSubList = listToSort.slice();
-        largerSubList = ;
+        // We split the bitonic list in half and have two (half sorted) lists
+        smallerSubList = listToSort.slice(0, bitonicListToSplit.length/2);
+        largerSubList = listToSort.slice(bitonicListToSplit.length/2, bitonicListToSplit.length);
+
+        // Then we iteratively perform bitonic splits until the list length is 2 (which is always bitonic)
+        smallerSubList = bitonicListToSplit(smallerSubList);
+        largerSubList = bitonicListToSplit(largerSubList);
 
         listToSort = smallerSubList.concat(largerSubList);
     }
@@ -607,7 +612,7 @@ async function bitonicSplit(bitonicListToSplit){
 
 async function bitonicBuild(listToBuild){
     // Makes the original list into a bitonic one (all elements are in ascending then descending order)
-
+    
 
 }
 
