@@ -5,7 +5,7 @@ const ctx = canvas.getContext("2d");
 // Setup Variables
 barArray = [];
 lastShuffledBarArray = [];
-numBarsToMake = 256;
+numBarsToMake = 16;
 circleCentreX = Math.round(canvas.width/2);
 circleCentreY = Math.round(canvas.height/2);
 minBarHeight = 50;
@@ -579,8 +579,8 @@ async function shellSort(arrayToSort){
 
 // Algorithms for bitonic sort
 async function bitonicSort(listToSort){
-    listToSort = bitonicBuild(listToSort);
-    listToSort = bitonicSplit(listToSort, 0);
+    listToSort = await bitonicBuild(listToSort);
+    listToSort = await bitonicSplit(listToSort, 0);
 
     return listToSort;
 }
@@ -594,27 +594,27 @@ async function bitonicSplit(bitonicListToSplit, sortMode){
             // SortMode 0 means ascending and 1 means decending
             if (sortMode == 0){
                 if (bitonicListToSplit[i].value > bitonicListToSplit[n].value){
-                    listToSort = await swapIndexes(bitonicListToSplit, i, n);
+                    bitonicListToSplit = await swapIndexes(bitonicListToSplit, i, n);
                 }
                 else{ await sleep(5); }
             }
             else{
                 if (bitonicListToSplit[i].value < bitonicListToSplit[n].value){
-                    listToSort = await swapIndexes(bitonicListToSplit, i, n);
+                    bitonicListToSplit = await swapIndexes(bitonicListToSplit, i, n);
                 }
                 else{ await sleep(5); }
             }
         }
         // We split the bitonic list in half and have two (half sorted) lists
-        let smallerSubList = listToSort.slice(0, bitonicListToSplit.length/2);
-        let largerSubList = listToSort.slice(bitonicListToSplit.length/2, bitonicListToSplit.length);
+        let smallerSubList = bitonicListToSplit.slice(0, bitonicListToSplit.length/2);
+        let largerSubList = bitonicListToSplit.slice(bitonicListToSplit.length/2, bitonicListToSplit.length);
 
         // Then we iteratively perform bitonic splits until the list length is 2 (which is always bitonic)
         smallerSubList = await bitonicSplit(smallerSubList);
         largerSubList = await bitonicSplit(largerSubList);
 
-        listToSort = smallerSubList.concat(largerSubList);
-        return listToSort;
+        bitonicListToSplit = smallerSubList.concat(largerSubList);
+        return bitonicListToSplit;
     }
     return bitonicListToSplit;
 }
