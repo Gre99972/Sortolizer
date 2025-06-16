@@ -606,8 +606,8 @@ async function bitonicSplit(bitonicListToSplit, sortMode){
             }
         }
         // We split the bitonic list in half and have two (half sorted) lists
-        smallerSubList = listToSort.slice(0, bitonicListToSplit.length/2);
-        largerSubList = listToSort.slice(bitonicListToSplit.length/2, bitonicListToSplit.length);
+        let smallerSubList = listToSort.slice(0, bitonicListToSplit.length/2);
+        let largerSubList = listToSort.slice(bitonicListToSplit.length/2, bitonicListToSplit.length);
 
         // Then we iteratively perform bitonic splits until the list length is 2 (which is always bitonic)
         smallerSubList = await bitonicSplit(smallerSubList);
@@ -619,16 +619,26 @@ async function bitonicSplit(bitonicListToSplit, sortMode){
     return bitonicListToSplit;
 }
 
-async function bitonicBuild(listToBuild, sortMode){
+async function bitonicBuild(listToBuild){
+    let smallerSubList;
+    let largerSubList;
     // Makes the original list into a bitonic one (all elements are in ascending then descending order)
     if (listToBuild.length > 2){
+        // Splits the list in half
         smallerSubList = await listToBuild.slice(0, listToBuild.length/2);
         largerSubList = await listToBuild.slice(listToBuild.length/2, listToBuild.length);
+        
+        // Build both of the sublists into bitonic lists
+        smallerSubList = await bitonicBuild(smallerSubList);
+        largerSubList = await bitonicBuild(largerSubList);
     }
     else{ return listToBuild; }
+    // Sort the first list in ascending order and the second in descending order
     smallerSubList = await bitonicSplit(smallerSubList, 0);
     largerSubList = await bitonicSplit(largerSubList, 1);
+    // Combine to make a new bitonic list
     listToBuild = smallerSubList.concat(largerSubList);
+    await drawBars();
 
     return listToBuild;
 }
