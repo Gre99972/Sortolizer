@@ -8,6 +8,7 @@ Click the button to shuffle the list then choose the sorting algorithm you want 
 # Features
 * Full Visualisation of sixteen different sorting algorithms
 * Sound effects when bars are swapped
+* Ability to restore the positon of the bars to the last shuffled configuration (for better comparison)
 
 # Implemented Algorithms
 * Fisher-Yates Shuffling
@@ -28,6 +29,7 @@ Click the button to shuffle the list then choose the sorting algorithm you want 
 * Merge Sort
 * Heap Sort
 * Quick Sort
+* Bitonic Sort
 
 * Bogo Sort
 * Miracle Sort
