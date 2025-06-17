@@ -89,7 +89,8 @@ function sleep(ms = 5){
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-async function playBleep(frequency = 1000, duration = 5) {
+async function playBleep(value = 0, duration = 5) {
+    let frequency = Math.floor((((value/(barArray.length) * 100) * 10) + 500));
     let decay = 0.05;
     let currentTime = audioCtx.currentTime;
     const oscNode = new OscillatorNode(audioCtx, {type: "square", frequency: frequency});
@@ -310,11 +311,11 @@ async function reverseBarSubArray(endIndex, array = barArray){
 
         barArray[i].SetColor(1);
         barArray[endIndex-i].SetColor(1);
-        playBleep(Math.floor(((((barArray[i].value)/(barArray.length) * 100) * 10) + 500)));
+        playBleep(barArray[i].value);
         await drawBars();
         await sleep();
         barArray[i].SetColor(0);
-        barArray[endIndex-i].SetColor(0);    
+        barArray[endIndex-i].SetColor(0); 
     }
 }
 
@@ -331,7 +332,7 @@ async function pancakeSort(){
                 nextElementToSort = i;
             }
             barArray[i].SetColor(1);
-            playBleep( Math.floor(((((barArray[i].value)/(barArray.length) * 100) * 10) + 500)));
+            playBleep(barArray[i].value);
             await drawBars();
             await sleep();
             barArray[i].SetColor(0);
@@ -384,7 +385,7 @@ async function mergeSort(subArray, trueArrayStartIndex){
             }
 
             subArray[i].SetColor(1);
-            playBleep( Math.floor(((((barArray[i].value)/(barArray.length) * 100) * 10) + 500)));
+            playBleep(barArray[i].value);
             await drawBars();
             await sleep();
             subArray[i].SetColor(0);
@@ -415,7 +416,7 @@ async function quickSort(subArray, trueArrayStartIndex){
         for (let i = 0; i < lessThanArray.length; i++){
             lessThanArray[i].index = trueArrayStartIndex + i;
             lessThanArray[i].SetColor(1);
-            playBleep( Math.floor(((((lessThanArray[i].value)/(barArray.length) * 100) * 10) + 500)));
+            playBleep(lessThanArray[i].value);
             await drawBars();
             await sleep();
             lessThanArray[i].SetColor(0);
@@ -423,7 +424,7 @@ async function quickSort(subArray, trueArrayStartIndex){
         for (let i = 0; i < greaterThanArray.length; i++){
             greaterThanArray[i].index = trueArrayStartIndex + lessThanArray.length + i;
             greaterThanArray[i].SetColor(1);
-            playBleep( Math.floor(((((greaterThanArray[i].value)/(barArray.length) * 100) * 10) + 500)));
+            playBleep(greaterThanArray[i].value);
             await drawBars();
             await sleep();
             greaterThanArray[i].SetColor(0);
@@ -535,7 +536,7 @@ async function radixSort(arrayToSort){
                 bucket[k].SetIndex(totalLength);
                 bucket[k].SetColor(1);
                 await drawBars();
-                await playBleep( Math.floor(((((bucket[k].value)/(barArray.length) * 100) * 10) + 500)));
+                await playBleep(bucket[k].value);
                 await sleep();
                 bucket[k].SetColor(0);
                 totalLength++;
@@ -856,7 +857,7 @@ async function greenPass(){
     for (let index = 0; index < (barArray.length - 1); index++){
         barArray[index].SetColor(2);
         barArray[index + 1].SetColor(2);
-        playBleep( Math.floor(((((barArray[index].value)/(barArray.length) * 100) * 10) + 500)));
+        playBleep(barArray[index].value);
         await drawBars();
         await sleep();
     }
@@ -887,7 +888,7 @@ async function bitonicSwapIndexes(array, index1, index2, trueStartIndex) {
     array[index1].SetColor(1);
     array[index2].SetColor(1);
 
-    await playBleep( Math.floor(((((array[index1].value)/(barArray.length) * 100) * 10) + 500)));
+    await playBleep(array[index1].value);
     await drawBars();
     await sleep();
     array[index1].SetColor(0);
@@ -909,7 +910,7 @@ async function swapIndexes(array, index1, index2) {
     array[index1].SetColor(1);
     array[index2].SetColor(1);
 
-    await playBleep( Math.floor(((((array[index1].value)/(barArray.length) * 100) * 10) + 500)));
+    await playBleep(array[index1].value);
     await drawBars();
     await sleep();
     array[index1].SetColor(0);
@@ -921,7 +922,7 @@ async function swapIndexes(array, index1, index2) {
 /*async function correctOrderComparison(array, index1, index2){
     array[index1].SetColor(2);
     array[index2].SetColor(2);
-    await playBleep( Math.floor(((((array[index1].value)/(barArray.length) * 100) * 10) + 500)));
+    await playBleep(array[index1].value);
     await drawBars();
     await sleep();
     array[index1].SetColor(0);
