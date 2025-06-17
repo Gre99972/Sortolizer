@@ -283,7 +283,12 @@ async function combSort() {
                 elementSwapped = true;
             }
             else{
-                await sleep();
+                barArray[index].SetColor(1); 
+                barArray[index + gap].SetColor(1); 
+                await drawBars();
+                await sleep(); 
+                barArray[index].SetColor(0);
+                barArray[index + gap].SetColor(0); 
             }      
         }
         await drawBars(); 
@@ -303,13 +308,13 @@ async function reverseBarSubArray(endIndex, array = barArray){
         array[i] = temp;
         array[i].SetIndex(i);
 
-        /*barArray[i].SetColor(1);
+        barArray[i].SetColor(1);
         barArray[endIndex-i].SetColor(1);
         playBleep(Math.floor(((((barArray[i].value)/(barArray.length) * 100) * 10) + 500)));
         await drawBars();
         await sleep();
         barArray[i].SetColor(0);
-        barArray[endIndex-i].SetColor(0);*/      
+        barArray[endIndex-i].SetColor(0);    
     }
 }
 
