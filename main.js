@@ -5,7 +5,7 @@ const ctx = canvas.getContext("2d");
 // Setup Variables
 barArray = [];
 lastShuffledBarArray = [];
-numBarsToMake = 16;
+numBarsToMake = 128;
 circleCentreX = Math.round(canvas.width/2);
 circleCentreY = Math.round(canvas.height/2);
 minBarHeight = 50;
@@ -85,11 +85,11 @@ function adjustBarSize(){
     }
 }
 
-function sleep(ms){
+function sleep(ms = 5){
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-async function playBleep(duration, frequency = 1000) {
+async function playBleep(frequency = 1000, duration = 5) {
     let decay = 0.05;
     let currentTime = audioCtx.currentTime;
     const oscNode = new OscillatorNode(audioCtx, {type: "square", frequency: frequency});
@@ -157,7 +157,7 @@ async function bubbleSort(){
                 elementSwapped = true;
             }
             else{
-                await sleep(5);
+                await sleep();
             }             
         }
         await drawBars(); 
@@ -177,7 +177,7 @@ async function insertionSort(){
             // Swap the elements
             barArray = await swapIndexes(barArray, index, index - 1);
             if (index > 1) { index--; }
-            else { await sleep(5); break; }
+            else { await sleep(); break; }
         }
     }
     greenPass();
@@ -195,7 +195,7 @@ async function selectionSort(){
                 barArray = await swapIndexes(barArray, index1, index2);
             }
             else{
-                await sleep(5);
+                await sleep();
             }      
         }
     }
@@ -221,7 +221,7 @@ async function saltShakerSort(){
                     elementSwapped = true;
                 }  
                 else{
-                    await sleep(5);
+                    await sleep();
                 }           
             }
         }
@@ -233,7 +233,7 @@ async function saltShakerSort(){
                     elementSwapped = true;
                 }
                 else{
-                    await sleep(5);
+                    await sleep();
                 }            
             }        
         }
@@ -283,7 +283,7 @@ async function combSort() {
                 elementSwapped = true;
             }
             else{
-                await sleep(5);
+                await sleep();
             }      
         }
         await drawBars(); 
@@ -294,26 +294,23 @@ async function combSort() {
     shuffling = false;
 }
 
-async function reverseBarSubArray(endIndex){
+async function reverseBarSubArray(endIndex, array = barArray){
     // Part of pancake sort
     for (let i = 0; i < Math.round(endIndex/2); i++){
-        let temp = barArray[endIndex-i];
-        barArray[endIndex-i] = barArray[i];
-        barArray[endIndex-i].SetIndex(endIndex-i);
-        barArray[i] = temp;
-        barArray[i].SetIndex(i);
+        temp = array[endIndex - i]
+        array[endIndex-i] = array[i];
+        array[endIndex-i].SetIndex(endIndex-i);
+        array[i] = temp;
+        array[i].SetIndex(i);
 
         /*barArray[i].SetColor(1);
         barArray[endIndex-i].SetColor(1);
-        playBleep(5, Math.floor(((((barArray[i].value)/(barArray.length) * 100) * 10) + 500)));
+        playBleep(Math.floor(((((barArray[i].value)/(barArray.length) * 100) * 10) + 500)));
         await drawBars();
-        await sleep(5);
+        await sleep();
         barArray[i].SetColor(0);
-        barArray[endIndex-i].SetColor(0);*/       
+        barArray[endIndex-i].SetColor(0);*/      
     }
-    playBleep(20, Math.floor(((((barArray[endIndex].value)/(barArray.length) * 100) * 10) + 500)));
-    await drawBars();
-    await sleep(350);
 }
 
 async function pancakeSort(){
@@ -329,9 +326,9 @@ async function pancakeSort(){
                 nextElementToSort = i;
             }
             barArray[i].SetColor(1);
-            playBleep(5, Math.floor(((((barArray[i].value)/(barArray.length) * 100) * 10) + 500)));
+            playBleep( Math.floor(((((barArray[i].value)/(barArray.length) * 100) * 10) + 500)));
             await drawBars();
-            await sleep(5);
+            await sleep();
             barArray[i].SetColor(0);
         }
         if (nextElementToSort != 0){
@@ -382,9 +379,9 @@ async function mergeSort(subArray, trueArrayStartIndex){
             }
 
             subArray[i].SetColor(1);
-            playBleep(5, Math.floor(((((barArray[i].value)/(barArray.length) * 100) * 10) + 500)));
+            playBleep( Math.floor(((((barArray[i].value)/(barArray.length) * 100) * 10) + 500)));
             await drawBars();
-            await sleep(5);
+            await sleep();
             subArray[i].SetColor(0);
         }
     }
@@ -413,17 +410,17 @@ async function quickSort(subArray, trueArrayStartIndex){
         for (let i = 0; i < lessThanArray.length; i++){
             lessThanArray[i].index = trueArrayStartIndex + i;
             lessThanArray[i].SetColor(1);
-            playBleep(5, Math.floor(((((lessThanArray[i].value)/(barArray.length) * 100) * 10) + 500)));
+            playBleep( Math.floor(((((lessThanArray[i].value)/(barArray.length) * 100) * 10) + 500)));
             await drawBars();
-            await sleep(5);
+            await sleep();
             lessThanArray[i].SetColor(0);
         }
         for (let i = 0; i < greaterThanArray.length; i++){
             greaterThanArray[i].index = trueArrayStartIndex + lessThanArray.length + i;
             greaterThanArray[i].SetColor(1);
-            playBleep(5, Math.floor(((((greaterThanArray[i].value)/(barArray.length) * 100) * 10) + 500)));
+            playBleep( Math.floor(((((greaterThanArray[i].value)/(barArray.length) * 100) * 10) + 500)));
             await drawBars();
-            await sleep(5);
+            await sleep();
             greaterThanArray[i].SetColor(0);
         }
                 
@@ -533,8 +530,8 @@ async function radixSort(arrayToSort){
                 bucket[k].SetIndex(totalLength);
                 bucket[k].SetColor(1);
                 await drawBars();
-                await playBleep(5, Math.floor(((((bucket[k].value)/(barArray.length) * 100) * 10) + 500)));
-                await sleep(5);
+                await playBleep( Math.floor(((((bucket[k].value)/(barArray.length) * 100) * 10) + 500)));
+                await sleep();
                 bucket[k].SetColor(0);
                 totalLength++;
             }
@@ -579,36 +576,35 @@ async function shellSort(arrayToSort){
 
 // Algorithms for bitonic sort
 async function bitonicSort(listToSort){
+    // Make the list bitonic
     listToSort = await bitonicBuild(listToSort);
+    // Sort the bitonic list
     listToSort = await bitonicSplit(listToSort);
 
     return listToSort;
 }
 
-async function bitonicSplit(bitonicListToSplit, trueStartIndex = 0, sortMode = 0){
+async function bitonicSplit(bitonicListToSplit, trueStartIndex = 0){
+    // Sorts any bitonic list and retruns the sorted list
     // Cuts the bitonic list into two smaller ones, where all the elements in the first bitonic sequence are
     // smaller than the elements in the second bitonic sequence (on an element by element basis)
     if (bitonicListToSplit.length > 1){
         for (let i = 0; i < bitonicListToSplit.length / 2; i++){
             let n = bitonicListToSplit.length / 2 + i;
             // SortMode 0 means ascending and 1 means decending
-            if (sortMode == 0){
-                if (bitonicListToSplit[i].value > bitonicListToSplit[n].value){
-                    bitonicListToSplit = await swapIndexes(bitonicListToSplit, i, n);
-                    // Adjust indexes to be aligned with true indexes instead of list indexes
-                    bitonicListToSplit[i].index = i + trueStartIndex;
-                    bitonicListToSplit[n].index = n + trueStartIndex;
-                }
-                else{ await sleep(5); }
+            if (bitonicListToSplit[i].value > bitonicListToSplit[n].value){
+                bitonicListToSplit = await bitonicSwapIndexes(bitonicListToSplit, i, n);
+                // Adjust indexes to be aligned with true indexes instead of list indexes
+                bitonicListToSplit[i].index = i + trueStartIndex;
+                bitonicListToSplit[n].index = n + trueStartIndex;
             }
-            else{
-                if (bitonicListToSplit[i].value < bitonicListToSplit[n].value){
-                    bitonicListToSplit = await swapIndexes(bitonicListToSplit, i, n);
-                    // Adjust indexes to be aligned with true indexes instead of list indexes
-                    bitonicListToSplit[i].index = i + trueStartIndex;
-                    bitonicListToSplit[n].index = n + trueStartIndex;
-                }
-                else{ await sleep(5); }
+            else{ 
+                bitonicListToSplit[i].SetColor(1); 
+                bitonicListToSplit[n].SetColor(1); 
+                await drawBars();
+                await sleep(); 
+                bitonicListToSplit[i].SetColor(0); 
+                bitonicListToSplit[n].SetColor(0); 
             }
         }
         // We split the bitonic list in half and have two (half sorted) lists
@@ -639,9 +635,17 @@ async function bitonicBuild(listToBuild, trueStartIndex = 0){
         largerSubList = await bitonicBuild(largerSubList, trueStartIndex + smallerSubList.length);
     }
     else{ return listToBuild; }
-    // Sort the first list in ascending order and the second in descending order
-    smallerSubList = await bitonicSplit(smallerSubList, trueStartIndex, 0);
-    largerSubList = await bitonicSplit(largerSubList, trueStartIndex + smallerSubList.length, 1);
+    // Sort the two lists
+    smallerSubList = await bitonicSplit(smallerSubList, trueStartIndex);
+    largerSubList = await bitonicSplit(largerSubList, trueStartIndex + smallerSubList.length);
+    // Reverse larger sub list so that one sequence is ascending and the other decending
+    largerSubList = largerSubList.reverse();
+    // Adjust indexes to reflect new array position
+    for (let i = 0; i < largerSubList.length; i++){
+        largerSubList[i].index = i + trueStartIndex + smallerSubList.length;
+        await drawBars();
+        await sleep(2);
+    }
     // Combine to make a new bitonic list
     listToBuild = smallerSubList.concat(largerSubList);
     await drawBars();
@@ -847,9 +851,9 @@ async function greenPass(){
     for (let index = 0; index < (barArray.length - 1); index++){
         barArray[index].SetColor(2);
         barArray[index + 1].SetColor(2);
-        playBleep(5, Math.floor(((((barArray[index].value)/(barArray.length) * 100) * 10) + 500)));
+        playBleep( Math.floor(((((barArray[index].value)/(barArray.length) * 100) * 10) + 500)));
         await drawBars();
-        await sleep(5);
+        await sleep();
     }
     await drawBars();
 }
@@ -865,6 +869,28 @@ window.onload = window.onresize = function() {
     drawBars();     
 }
 
+async function bitonicSwapIndexes(array, index1, index2, trueStartIndex) {
+    temp = array[index2];
+    array[index2] = array[index1];
+    array[index1] = temp;
+
+    array[index1].SetIndex(index1 + trueStartIndex);
+    array[index2].SetIndex(index2 + trueStartIndex);
+
+    // Visuals
+
+    array[index1].SetColor(1);
+    array[index2].SetColor(1);
+
+    await playBleep( Math.floor(((((array[index1].value)/(barArray.length) * 100) * 10) + 500)));
+    await drawBars();
+    await sleep();
+    array[index1].SetColor(0);
+    array[index2].SetColor(0);
+
+    return array;
+}
+
 async function swapIndexes(array, index1, index2) {
     temp = array[index2];
     array[index2] = array[index1];
@@ -878,9 +904,9 @@ async function swapIndexes(array, index1, index2) {
     array[index1].SetColor(1);
     array[index2].SetColor(1);
 
-    await playBleep(5, Math.floor(((((array[index1].value)/(barArray.length) * 100) * 10) + 500)));
+    await playBleep( Math.floor(((((array[index1].value)/(barArray.length) * 100) * 10) + 500)));
     await drawBars();
-    await sleep(5);
+    await sleep();
     array[index1].SetColor(0);
     array[index2].SetColor(0);
 
@@ -890,9 +916,9 @@ async function swapIndexes(array, index1, index2) {
 /*async function correctOrderComparison(array, index1, index2){
     array[index1].SetColor(2);
     array[index2].SetColor(2);
-    await playBleep(5, Math.floor(((((array[index1].value)/(barArray.length) * 100) * 10) + 500)));
+    await playBleep( Math.floor(((((array[index1].value)/(barArray.length) * 100) * 10) + 500)));
     await drawBars();
-    await sleep(5);
+    await sleep();
     array[index1].SetColor(0);
     array[index2].SetColor(0);
 }*/
