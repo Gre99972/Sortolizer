@@ -256,11 +256,15 @@ async function gnomeSort(){
             barArray = await swapIndexes(barArray, i, i + 1)
             // Move back one
             if (i > 0){
+                barArray[i].SetColor(0);
                 i--;
+                barArray[i].SetColor(3);
             }
         }
         else{
+            barArray[i].SetColor(0);
             i++;
+            barArray[i].SetColor(3);
         }
     }
     shuffling = false;
@@ -270,12 +274,13 @@ async function gnomeSort(){
 async function combSort() {
     shuffling = true;
 
-    let elementSwapped = true;
+    let elementSwapped = false;
     let gapSize = barArray.length;
+    let gap = Math.floor(gapSize);
     shuffling = true;
-    while (elementSwapped || gapSize > 1){
+    while (!elementSwapped || gap > 1){
         gapSize = gapSize/1.3;
-        let gap = Math.floor(gapSize);
+        gap = Math.floor(gapSize);
         elementSwapped = false;
         for (let index = 0; index < barArray.length-gap; index++){
             if (barArray[index+gap].value < barArray[index].value){
@@ -596,15 +601,13 @@ async function bitonicSplit(bitonicListToSplit, trueStartIndex = 0){
     // smaller than the elements in the second bitonic sequence (on an element by element basis)
     if (bitonicListToSplit.length > 1){
         for (let i = 0; i < bitonicListToSplit.length / 2; i++){
+            // Compare each element of the first half with each elemenet of the second half and swap so second half > first half for every individual element
             let n = bitonicListToSplit.length / 2 + i;
-            // SortMode 0 means ascending and 1 means decending
             if (bitonicListToSplit[i].value > bitonicListToSplit[n].value){
-                bitonicListToSplit = await bitonicSwapIndexes(bitonicListToSplit, i, n);
-                // Adjust indexes to be aligned with true indexes instead of list indexes
-                bitonicListToSplit[i].index = i + trueStartIndex;
-                bitonicListToSplit[n].index = n + trueStartIndex;
+                bitonicListToSplit = await swapIndexes(bitonicListToSplit, i, n, trueStartIndex);
             }
             else{ 
+                // Colour the bars and draw
                 bitonicListToSplit[i].SetColor(1); 
                 bitonicListToSplit[n].SetColor(1); 
                 await drawBars();
@@ -875,35 +878,13 @@ window.onload = window.onresize = function() {
     drawBars();     
 }
 
-async function bitonicSwapIndexes(array, index1, index2, trueStartIndex) {
+async function swapIndexes(array = barArray, index1, index2, trueStartIndex = 0) {
     temp = array[index2];
     array[index2] = array[index1];
     array[index1] = temp;
 
     array[index1].SetIndex(index1 + trueStartIndex);
     array[index2].SetIndex(index2 + trueStartIndex);
-
-    // Visuals
-
-    array[index1].SetColor(1);
-    array[index2].SetColor(1);
-
-    await playBleep(array[index1].value);
-    await drawBars();
-    await sleep();
-    array[index1].SetColor(0);
-    array[index2].SetColor(0);
-
-    return array;
-}
-
-async function swapIndexes(array, index1, index2) {
-    temp = array[index2];
-    array[index2] = array[index1];
-    array[index1] = temp;
-
-    array[index1].SetIndex(index1);
-    array[index2].SetIndex(index2);
 
     // Visuals
 
