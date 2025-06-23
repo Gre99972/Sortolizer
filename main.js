@@ -158,7 +158,13 @@ async function bubbleSort(){
                 elementSwapped = true;
             }
             else{
+                barArray[index].SetColor(2);
+                barArray[index + 1].SetColor(2);
+                playBleep(index);
+                drawBars();
                 await sleep();
+                barArray[index].SetColor(0);
+                barArray[index + 1].SetColor(0);
             }             
         }
         await drawBars(); 
@@ -178,7 +184,16 @@ async function insertionSort(){
             // Swap the elements
             barArray = await swapIndexes(barArray, index, index - 1);
             if (index > 1) { index--; }
-            else { await sleep(); break; }
+            else { 
+                barArray[index].SetColor(2);
+                barArray[index - 1].SetColor(2);
+                playBleep(index);
+                drawBars();
+                await sleep(); 
+                barArray[index].SetColor(0);
+                barArray[index - 1].SetColor(0);
+                break; 
+            }
         }
     }
     greenPass();
