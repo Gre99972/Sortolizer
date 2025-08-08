@@ -5,7 +5,7 @@ const ctx = canvas.getContext("2d");
 // Setup Variables
 barArray = [];
 lastShuffledBarArray = [];
-numBarsToMake = 128;
+numBarsToMake = 9999;
 circleCentreX = Math.round(canvas.width/2);
 circleCentreY = Math.round(canvas.height/2);
 minBarHeight = 50;
